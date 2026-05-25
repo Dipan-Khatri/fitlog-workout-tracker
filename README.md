@@ -1,11 +1,13 @@
- 
+# FitLog - Workout Tracker
 
-# CSCE 3444 Project
+## Team Name
+CodeForge
 
 ## Team Members
-- Dipan Khatri Thapa – Repository Setup
-- Member 2 – UI
-- Member 3 – Backend
+- Dipan Khatri Thapa – Team Lead / Repository Setup
+- Neak Jalal – Frontend Development
+- Francis Ilesanmi – Backend Development
+- Ishita Thakkar – UI/Testing
 
 ## Project Description
-This project is being developed for CSCE 3444 Software Engineering course.
+FitLog is a workout tracking web application that helps users record exercises, sets, reps, workout dates, and fitness progress.
