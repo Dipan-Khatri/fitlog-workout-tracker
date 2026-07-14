@@ -3,6 +3,9 @@ import { NavLink, useNavigate } from "react-router-dom";
 function Navbar() {
   const navigate = useNavigate();
 
+  const userName =
+    localStorage.getItem("fitlogUserName") || "User";
+
   function getLinkClass({ isActive }) {
     return isActive ? "nav-link active" : "nav-link";
   }
@@ -16,8 +19,6 @@ function Navbar() {
     navigate("/login");
   }
 
-  const userName = localStorage.getItem("fitlogUserName") || "User";
-
   return (
     <aside className="fitlog-sidebar">
       <div className="sidebar-logo-section">
@@ -29,24 +30,44 @@ function Navbar() {
       </div>
 
       <nav className="sidebar-navigation">
-        <NavLink to="/dashboard" className={getLinkClass}>
+        <NavLink
+          to="/dashboard"
+          className={getLinkClass}
+        >
           <span aria-hidden="true">⌂</span>
           Dashboard
         </NavLink>
 
-        <NavLink to="/add-workout" className={getLinkClass}>
+        <NavLink
+          to="/add-workout"
+          className={getLinkClass}
+        >
           <span aria-hidden="true">＋</span>
           Add Workout
         </NavLink>
 
-        <NavLink to="/history" className={getLinkClass}>
+        <NavLink
+          to="/history"
+          className={getLinkClass}
+        >
           <span aria-hidden="true">◷</span>
           History
         </NavLink>
 
-        <NavLink to="/progress" className={getLinkClass}>
+        <NavLink
+          to="/progress"
+          className={getLinkClass}
+        >
           <span aria-hidden="true">▥</span>
           Progress
+        </NavLink>
+
+        <NavLink
+          to="/profile"
+          className={getLinkClass}
+        >
+          <span aria-hidden="true">◎</span>
+          Profile
         </NavLink>
       </nav>
 
@@ -59,7 +80,10 @@ function Navbar() {
         Logout
       </button>
 
-      <div className="sidebar-user">
+      <NavLink
+        to="/profile"
+        className="sidebar-user sidebar-user-link"
+      >
         <div className="user-avatar">
           {userName.charAt(0).toUpperCase()}
         </div>
@@ -68,7 +92,7 @@ function Navbar() {
           <strong>{userName}</strong>
           <small>FitLog Member</small>
         </div>
-      </div>
+      </NavLink>
     </aside>
   );
 }
