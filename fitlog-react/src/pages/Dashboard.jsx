@@ -97,9 +97,14 @@ function Dashboard() {
   const [calendarNotes, setCalendarNotes] =
     useState(savedNotes);
 
-  const [selectedDay, setSelectedDay] = useState(null);
-  const [noteText, setNoteText] = useState("");
-  const [noteMessage, setNoteMessage] = useState("");
+  const [selectedDay, setSelectedDay] =
+    useState(null);
+
+  const [noteText, setNoteText] =
+    useState("");
+
+  const [noteMessage, setNoteMessage] =
+    useState("");
 
   const now = new Date();
   const currentHour = now.getHours();
@@ -125,10 +130,15 @@ function Dashboard() {
     year: "numeric",
   });
 
-  const startOfYear = new Date(now.getFullYear(), 0, 0);
+  const startOfYear = new Date(
+    now.getFullYear(),
+    0,
+    0
+  );
 
   const dayOfYear = Math.floor(
-    (now - startOfYear) / (1000 * 60 * 60 * 24)
+    (now - startOfYear) /
+      (1000 * 60 * 60 * 24)
   );
 
   const dailyQuote =
@@ -154,11 +164,13 @@ function Dashboard() {
   const recentWorkouts = [...workouts]
     .sort((firstWorkout, secondWorkout) => {
       const firstDate = new Date(
-        firstWorkout.createdAt || firstWorkout.date
+        firstWorkout.createdAt ||
+          firstWorkout.date
       );
 
       const secondDate = new Date(
-        secondWorkout.createdAt || secondWorkout.date
+        secondWorkout.createdAt ||
+          secondWorkout.date
       );
 
       return secondDate - firstDate;
@@ -180,44 +192,69 @@ function Dashboard() {
     (_, index) => {
       const date = new Date(startOfWeek);
 
-      date.setDate(startOfWeek.getDate() + index);
+      date.setDate(
+        startOfWeek.getDate() + index
+      );
 
       const dateKey = formatDateKey(date);
 
       const workoutsForDay = workouts.filter(
-        (workout) => workout.date === dateKey
+        (workout) =>
+          workout.date === dateKey
       );
 
       return {
         date,
         dateKey,
-        shortDay: date.toLocaleDateString("en-US", {
-          weekday: "short",
-        }),
-        fullDate: date.toLocaleDateString("en-US", {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        }),
+
+        shortDay: date.toLocaleDateString(
+          "en-US",
+          {
+            weekday: "short",
+          }
+        ),
+
+        fullDate: date.toLocaleDateString(
+          "en-US",
+          {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          }
+        ),
+
         dayNumber: date.getDate(),
-        isToday: dateKey === formatDateKey(now),
-        hasWorkout: workoutsForDay.length > 0,
-        workoutCount: workoutsForDay.length,
+
+        isToday:
+          dateKey === formatDateKey(now),
+
+        hasWorkout:
+          workoutsForDay.length > 0,
+
+        workoutCount:
+          workoutsForDay.length,
+
         workouts: workoutsForDay,
-        hasNote: Boolean(calendarNotes[dateKey]?.trim()),
+
+        hasNote: Boolean(
+          calendarNotes[dateKey]?.trim()
+        ),
       };
     }
   );
 
-  const weeklyWorkoutCount = weeklyDays.reduce(
-    (total, day) => total + day.workoutCount,
-    0
-  );
+  const weeklyWorkoutCount =
+    weeklyDays.reduce(
+      (total, day) =>
+        total + day.workoutCount,
+      0
+    );
 
-  const weeklyActiveDays = weeklyDays.filter(
-    (day) => day.hasWorkout
-  ).length;
+  const weeklyActiveDays =
+    weeklyDays.filter(
+      (day) => day.hasWorkout
+    ).length;
 
   const weeklyGoal = 5;
 
@@ -226,27 +263,43 @@ function Dashboard() {
     100
   );
 
-  const workoutDateSet = new Set(uniqueWorkoutDates);
+  const workoutDateSet =
+    new Set(uniqueWorkoutDates);
 
   let currentStreak = 0;
 
   const streakDate = new Date(now);
   streakDate.setHours(0, 0, 0, 0);
 
-  if (!workoutDateSet.has(formatDateKey(streakDate))) {
-    streakDate.setDate(streakDate.getDate() - 1);
+  if (
+    !workoutDateSet.has(
+      formatDateKey(streakDate)
+    )
+  ) {
+    streakDate.setDate(
+      streakDate.getDate() - 1
+    );
   }
 
   while (
-    workoutDateSet.has(formatDateKey(streakDate))
+    workoutDateSet.has(
+      formatDateKey(streakDate)
+    )
   ) {
     currentStreak += 1;
-    streakDate.setDate(streakDate.getDate() - 1);
+
+    streakDate.setDate(
+      streakDate.getDate() - 1
+    );
   }
 
   function openDayNote(day) {
     setSelectedDay(day);
-    setNoteText(calendarNotes[day.dateKey] || "");
+
+    setNoteText(
+      calendarNotes[day.dateKey] || ""
+    );
+
     setNoteMessage("");
   }
 
@@ -263,11 +316,14 @@ function Dashboard() {
 
     const updatedNotes = {
       ...calendarNotes,
-      [selectedDay.dateKey]: noteText.trim(),
+      [selectedDay.dateKey]:
+        noteText.trim(),
     };
 
     if (!noteText.trim()) {
-      delete updatedNotes[selectedDay.dateKey];
+      delete updatedNotes[
+        selectedDay.dateKey
+      ];
     }
 
     localStorage.setItem(
@@ -293,7 +349,9 @@ function Dashboard() {
       ...calendarNotes,
     };
 
-    delete updatedNotes[selectedDay.dateKey];
+    delete updatedNotes[
+      selectedDay.dateKey
+    ];
 
     localStorage.setItem(
       notesKey,
@@ -305,11 +363,23 @@ function Dashboard() {
     setNoteMessage("Note deleted.");
   }
 
+  function getNotePreview(note) {
+    if (!note) {
+      return "";
+    }
+
+    return note.length > 42
+      ? `${note.slice(0, 42)}...`
+      : note;
+  }
+
   return (
     <section className="content-page dashboard-page">
       <header className="dashboard-header personalized-header">
         <div className="dashboard-header-text">
-          <p className="dashboard-date">{today}</p>
+          <p className="dashboard-date">
+            {today}
+          </p>
 
           <h1>
             {greeting}, {userName}!{" "}
@@ -319,8 +389,9 @@ function Dashboard() {
           </h1>
 
           <p className="dashboard-motivation">
-            Stay consistent. Every workout brings you
-            closer to your fitness goal.
+            Stay consistent. Every workout
+            brings you closer to your fitness
+            goal.
           </p>
         </div>
 
@@ -334,7 +405,10 @@ function Dashboard() {
       </header>
 
       <article className="dashboard-quote-card">
-        <div className="quote-icon" aria-hidden="true">
+        <div
+          className="quote-icon"
+          aria-hidden="true"
+        >
           {dailyQuote.icon}
         </div>
 
@@ -360,44 +434,59 @@ function Dashboard() {
 
       <div className="stat-grid">
         <article className="stat-card">
-          <div className="stat-icon blue">🏋️</div>
+          <div className="stat-icon blue">
+            🏋️
+          </div>
 
           <div>
             <span>Total Workouts</span>
-            <strong>{workouts.length}</strong>
-          </div>
-        </article>
-
-        <article className="stat-card">
-          <div className="stat-icon green">◷</div>
-
-          <div>
-            <span>Total Duration</span>
-            <strong>{totalDuration} min</strong>
-          </div>
-        </article>
-
-        <article className="stat-card">
-          <div className="stat-icon orange">↗</div>
-
-          <div>
-            <span>Total Volume</span>
-
             <strong>
-              {totalVolume.toLocaleString()} lbs
+              {workouts.length}
             </strong>
           </div>
         </article>
 
         <article className="stat-card">
-          <div className="stat-icon purple">★</div>
+          <div className="stat-icon green">
+            ◷
+          </div>
+
+          <div>
+            <span>Total Duration</span>
+            <strong>
+              {totalDuration} min
+            </strong>
+          </div>
+        </article>
+
+        <article className="stat-card">
+          <div className="stat-icon orange">
+            ↗
+          </div>
+
+          <div>
+            <span>Total Volume</span>
+
+            <strong>
+              {totalVolume.toLocaleString()}{" "}
+              lbs
+            </strong>
+          </div>
+        </article>
+
+        <article className="stat-card">
+          <div className="stat-icon purple">
+            ★
+          </div>
 
           <div>
             <span>Current Streak</span>
 
             <strong>
               {currentStreak}{" "}
-              {currentStreak === 1 ? "day" : "days"}
+              {currentStreak === 1
+                ? "day"
+                : "days"}
             </strong>
           </div>
         </article>
@@ -409,12 +498,15 @@ function Dashboard() {
             <h2>Weekly Activity</h2>
 
             <p className="card-subtitle">
-              Click any day to add a reminder or note
+              Click any day to add a reminder
+              or note
             </p>
           </div>
 
           <div className="weekly-calendar-summary">
-            <strong>{weeklyActiveDays}</strong>
+            <strong>
+              {weeklyActiveDays}
+            </strong>
 
             <span>
               active{" "}
@@ -430,25 +522,24 @@ function Dashboard() {
             <button
               type="button"
               key={day.dateKey}
-              onClick={() => openDayNote(day)}
+              onClick={() =>
+                openDayNote(day)
+              }
               className={[
                 "weekly-calendar-day",
-                day.isToday ? "today" : "",
-                day.hasWorkout ? "completed" : "",
-                day.hasNote ? "has-note" : "",
+                day.isToday
+                  ? "today"
+                  : "",
+                day.hasWorkout
+                  ? "completed"
+                  : "",
+                day.hasNote
+                  ? "has-note"
+                  : "",
               ]
                 .filter(Boolean)
                 .join(" ")}
             >
-              {day.hasNote && (
-                <span
-                  className="calendar-note-indicator"
-                  title="This day has a note"
-                >
-                  📝
-                </span>
-              )}
-
               <span className="calendar-day-name">
                 {day.shortDay}
               </span>
@@ -457,19 +548,43 @@ function Dashboard() {
                 {day.dayNumber}
               </strong>
 
-              <div className="calendar-status-icon">
-                {day.hasWorkout ? "✓" : "—"}
-              </div>
+              {day.hasWorkout && (
+                <div className="calendar-status-icon">
+                  ✓
+                </div>
+              )}
 
-              <small>
-                {day.hasWorkout
-                  ? `${day.workoutCount} ${
-                      day.workoutCount === 1
-                        ? "workout"
-                        : "workouts"
-                    }`
-                  : "Rest day"}
-              </small>
+              {day.hasWorkout && (
+                <small className="calendar-workout-count">
+                  {day.workoutCount}{" "}
+                  {day.workoutCount === 1
+                    ? "workout"
+                    : "workouts"}
+                </small>
+              )}
+
+              {day.hasNote && (
+                <div className="calendar-note-preview">
+                  <span aria-hidden="true">
+                    📝
+                  </span>
+
+                  <p>
+                    {getNotePreview(
+                      calendarNotes[
+                        day.dateKey
+                      ]
+                    )}
+                  </p>
+                </div>
+              )}
+
+              {!day.hasWorkout &&
+                !day.hasNote && (
+                  <small className="calendar-empty-message">
+                    Add note
+                  </small>
+                )}
             </button>
           ))}
         </div>
@@ -513,7 +628,9 @@ function Dashboard() {
               </p>
             </div>
 
-            <Link to="/history">View all</Link>
+            <Link to="/history">
+              View all
+            </Link>
           </div>
 
           {recentWorkouts.length === 0 ? (
@@ -522,11 +639,13 @@ function Dashboard() {
                 🏃
               </div>
 
-              <h3>No workouts recorded yet</h3>
+              <h3>
+                No workouts recorded yet
+              </h3>
 
               <p>
-                Add your first workout to begin tracking
-                your progress.
+                Add your first workout to
+                begin tracking your progress.
               </p>
 
               <Link
@@ -538,34 +657,44 @@ function Dashboard() {
             </div>
           ) : (
             <div className="recent-workout-list">
-              {recentWorkouts.map((workout) => (
-                <div
-                  className="recent-workout"
-                  key={workout.id}
-                >
-                  <div className="recent-icon">
-                    🏋️
+              {recentWorkouts.map(
+                (workout) => (
+                  <div
+                    className="recent-workout"
+                    key={workout.id}
+                  >
+                    <div className="recent-icon">
+                      🏋️
+                    </div>
+
+                    <div className="recent-info">
+                      <strong>
+                        {
+                          workout.workoutName
+                        }
+                      </strong>
+
+                      <span>
+                        {
+                          workout.exerciseName
+                        }
+                      </span>
+                    </div>
+
+                    <div className="recent-date">
+                      <span>
+                        {workout.date}
+                      </span>
+
+                      <small>
+                        {workout.duration ||
+                          0}{" "}
+                        min
+                      </small>
+                    </div>
                   </div>
-
-                  <div className="recent-info">
-                    <strong>
-                      {workout.workoutName}
-                    </strong>
-
-                    <span>
-                      {workout.exerciseName}
-                    </span>
-                  </div>
-
-                  <div className="recent-date">
-                    <span>{workout.date}</span>
-
-                    <small>
-                      {workout.duration || 0} min
-                    </small>
-                  </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           )}
         </article>
@@ -576,12 +705,14 @@ function Dashboard() {
               <h2>Weekly Goal</h2>
 
               <p className="card-subtitle">
-                Complete {weeklyGoal} active workout
-                days
+                Complete {weeklyGoal} active
+                workout days
               </p>
             </div>
 
-            <div className="goal-icon">🎯</div>
+            <div className="goal-icon">
+              🎯
+            </div>
           </div>
 
           <div className="goal-progress-information">
@@ -593,7 +724,9 @@ function Dashboard() {
               / {weeklyGoal}
             </strong>
 
-            <span>active days completed</span>
+            <span>
+              active days completed
+            </span>
           </div>
 
           <div className="weekly-goal-progress">
@@ -641,7 +774,8 @@ function Dashboard() {
             <h2>Progress Overview</h2>
 
             <p className="card-subtitle">
-              A summary of your fitness activity
+              A summary of your fitness
+              activity
             </p>
           </div>
 
@@ -662,7 +796,9 @@ function Dashboard() {
         <div className="dashboard-summary-grid">
           <div className="dashboard-summary-item">
             <span>Total Minutes</span>
-            <strong>{totalDuration}</strong>
+            <strong>
+              {totalDuration}
+            </strong>
           </div>
 
           <div className="dashboard-summary-item">
@@ -685,7 +821,10 @@ function Dashboard() {
             <span>Weekly Goal</span>
 
             <strong>
-              {Math.round(weeklyProgress)}%
+              {Math.round(
+                weeklyProgress
+              )}
+              %
             </strong>
           </div>
         </div>
@@ -727,9 +866,12 @@ function Dashboard() {
               </button>
             </div>
 
-            {selectedDay.workouts.length > 0 && (
+            {selectedDay.workouts.length >
+              0 && (
               <div className="calendar-day-workouts">
-                <h3>Workouts scheduled</h3>
+                <h3>
+                  Workouts scheduled
+                </h3>
 
                 {selectedDay.workouts.map(
                   (workout) => (
@@ -739,16 +881,22 @@ function Dashboard() {
                     >
                       <div>
                         <strong>
-                          {workout.workoutName}
+                          {
+                            workout.workoutName
+                          }
                         </strong>
 
                         <span>
-                          {workout.exerciseName}
+                          {
+                            workout.exerciseName
+                          }
                         </span>
                       </div>
 
                       <small>
-                        {workout.duration || 0} min
+                        {workout.duration ||
+                          0}{" "}
+                        min
                       </small>
                     </div>
                   )
@@ -767,7 +915,10 @@ function Dashboard() {
                 maxLength="500"
                 value={noteText}
                 onChange={(event) => {
-                  setNoteText(event.target.value);
+                  setNoteText(
+                    event.target.value
+                  );
+
                   setNoteMessage("");
                 }}
                 placeholder="Example: Leg day at 6:00 PM, drink more water, or remember to stretch..."
