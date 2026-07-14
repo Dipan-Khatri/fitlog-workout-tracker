@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const motivationalQuotes = [
@@ -41,8 +42,6 @@ const motivationalQuotes = [
 function getStartOfWeek(date) {
   const currentDate = new Date(date);
   const day = currentDate.getDay();
-
-  // Make Monday the first day of the week.
   const difference = day === 0 ? -6 : 1 - day;
 
   currentDate.setDate(currentDate.getDate() + difference);
@@ -70,7 +69,12 @@ function Dashboard() {
     ? `fitlogWorkouts_${currentUserId}`
     : null;
 
+  const notesKey = currentUserId
+    ? `fitlogCalendarNotes_${currentUserId}`
+    : null;
+
   let workouts = [];
+  let savedNotes = {};
 
   try {
     workouts = workoutKey
@@ -80,6 +84,22 @@ function Dashboard() {
     console.error("Unable to load workouts:", error);
     workouts = [];
   }
+
+  try {
+    savedNotes = notesKey
+      ? JSON.parse(localStorage.getItem(notesKey)) || {}
+      : {};
+  } catch (error) {
+    console.error("Unable to load calendar notes:", error);
+    savedNotes = {};
+  }
+
+  const [calendarNotes, setCalendarNotes] =
+    useState(savedNotes);
+
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [noteText, setNoteText] = useState("");
+  const [noteMessage, setNoteMessage] = useState("");
 
   const now = new Date();
   const currentHour = now.getHours();
@@ -105,14 +125,16 @@ function Dashboard() {
     year: "numeric",
   });
 
-  // The quote changes once each day instead of every refresh.
   const startOfYear = new Date(now.getFullYear(), 0, 0);
+
   const dayOfYear = Math.floor(
     (now - startOfYear) / (1000 * 60 * 60 * 24)
   );
 
   const dailyQuote =
-    motivationalQuotes[dayOfYear % motivationalQuotes.length];
+    motivationalQuotes[
+      dayOfYear % motivationalQuotes.length
+    ];
 
   const totalDuration = workouts.reduce(
     (total, workout) =>
@@ -151,34 +173,42 @@ function Dashboard() {
     ),
   ];
 
-  /*
-    WEEKLY CALENDAR
-    Creates Monday through Sunday for the current week.
-  */
   const startOfWeek = getStartOfWeek(now);
 
-  const weeklyDays = Array.from({ length: 7 }, (_, index) => {
-    const date = new Date(startOfWeek);
-    date.setDate(startOfWeek.getDate() + index);
+  const weeklyDays = Array.from(
+    { length: 7 },
+    (_, index) => {
+      const date = new Date(startOfWeek);
 
-    const dateKey = formatDateKey(date);
+      date.setDate(startOfWeek.getDate() + index);
 
-    const workoutsForDay = workouts.filter(
-      (workout) => workout.date === dateKey
-    );
+      const dateKey = formatDateKey(date);
 
-    return {
-      date,
-      dateKey,
-      shortDay: date.toLocaleDateString("en-US", {
-        weekday: "short",
-      }),
-      dayNumber: date.getDate(),
-      isToday: dateKey === formatDateKey(now),
-      hasWorkout: workoutsForDay.length > 0,
-      workoutCount: workoutsForDay.length,
-    };
-  });
+      const workoutsForDay = workouts.filter(
+        (workout) => workout.date === dateKey
+      );
+
+      return {
+        date,
+        dateKey,
+        shortDay: date.toLocaleDateString("en-US", {
+          weekday: "short",
+        }),
+        fullDate: date.toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        }),
+        dayNumber: date.getDate(),
+        isToday: dateKey === formatDateKey(now),
+        hasWorkout: workoutsForDay.length > 0,
+        workoutCount: workoutsForDay.length,
+        workouts: workoutsForDay,
+        hasNote: Boolean(calendarNotes[dateKey]?.trim()),
+      };
+    }
+  );
 
   const weeklyWorkoutCount = weeklyDays.reduce(
     (total, day) => total + day.workoutCount,
@@ -196,24 +226,83 @@ function Dashboard() {
     100
   );
 
-  /*
-    Simple streak calculation:
-    Counts consecutive workout dates going backward from today.
-  */
   const workoutDateSet = new Set(uniqueWorkoutDates);
+
   let currentStreak = 0;
+
   const streakDate = new Date(now);
   streakDate.setHours(0, 0, 0, 0);
 
-  // Allow a streak to continue when the user has not worked out today
-  // but did work out yesterday.
   if (!workoutDateSet.has(formatDateKey(streakDate))) {
     streakDate.setDate(streakDate.getDate() - 1);
   }
 
-  while (workoutDateSet.has(formatDateKey(streakDate))) {
+  while (
+    workoutDateSet.has(formatDateKey(streakDate))
+  ) {
     currentStreak += 1;
     streakDate.setDate(streakDate.getDate() - 1);
+  }
+
+  function openDayNote(day) {
+    setSelectedDay(day);
+    setNoteText(calendarNotes[day.dateKey] || "");
+    setNoteMessage("");
+  }
+
+  function closeDayNote() {
+    setSelectedDay(null);
+    setNoteText("");
+    setNoteMessage("");
+  }
+
+  function saveDayNote() {
+    if (!selectedDay || !notesKey) {
+      return;
+    }
+
+    const updatedNotes = {
+      ...calendarNotes,
+      [selectedDay.dateKey]: noteText.trim(),
+    };
+
+    if (!noteText.trim()) {
+      delete updatedNotes[selectedDay.dateKey];
+    }
+
+    localStorage.setItem(
+      notesKey,
+      JSON.stringify(updatedNotes)
+    );
+
+    setCalendarNotes(updatedNotes);
+
+    setNoteMessage(
+      noteText.trim()
+        ? "Note saved successfully."
+        : "Empty note removed."
+    );
+  }
+
+  function deleteDayNote() {
+    if (!selectedDay || !notesKey) {
+      return;
+    }
+
+    const updatedNotes = {
+      ...calendarNotes,
+    };
+
+    delete updatedNotes[selectedDay.dateKey];
+
+    localStorage.setItem(
+      notesKey,
+      JSON.stringify(updatedNotes)
+    );
+
+    setCalendarNotes(updatedNotes);
+    setNoteText("");
+    setNoteMessage("Note deleted.");
   }
 
   return (
@@ -224,12 +313,14 @@ function Dashboard() {
 
           <h1>
             {greeting}, {userName}!{" "}
-            <span aria-hidden="true">{greetingEmoji}</span>
+            <span aria-hidden="true">
+              {greetingEmoji}
+            </span>
           </h1>
 
           <p className="dashboard-motivation">
-            Stay consistent. Every workout brings you closer
-            to your fitness goal.
+            Stay consistent. Every workout brings you
+            closer to your fitness goal.
           </p>
         </div>
 
@@ -241,8 +332,6 @@ function Dashboard() {
           Add Workout
         </Link>
       </header>
-
-      {/* QUOTE OF THE DAY */}
 
       <article className="dashboard-quote-card">
         <div className="quote-icon" aria-hidden="true">
@@ -261,12 +350,13 @@ function Dashboard() {
           <p>— {dailyQuote.author}</p>
         </div>
 
-        <div className="quote-decoration" aria-hidden="true">
+        <div
+          className="quote-decoration"
+          aria-hidden="true"
+        >
           ”
         </div>
       </article>
-
-      {/* STATISTICS */}
 
       <div className="stat-grid">
         <article className="stat-card">
@@ -313,38 +403,52 @@ function Dashboard() {
         </article>
       </div>
 
-      {/* WEEKLY CALENDAR */}
-
       <article className="dashboard-card weekly-calendar-card">
         <div className="card-title-row">
           <div>
             <h2>Weekly Activity</h2>
 
             <p className="card-subtitle">
-              Your workout activity from Monday through Sunday
+              Click any day to add a reminder or note
             </p>
           </div>
 
           <div className="weekly-calendar-summary">
             <strong>{weeklyActiveDays}</strong>
+
             <span>
-              active {weeklyActiveDays === 1 ? "day" : "days"}
+              active{" "}
+              {weeklyActiveDays === 1
+                ? "day"
+                : "days"}
             </span>
           </div>
         </div>
 
         <div className="weekly-calendar-grid">
           {weeklyDays.map((day) => (
-            <div
+            <button
+              type="button"
               key={day.dateKey}
+              onClick={() => openDayNote(day)}
               className={[
                 "weekly-calendar-day",
                 day.isToday ? "today" : "",
                 day.hasWorkout ? "completed" : "",
+                day.hasNote ? "has-note" : "",
               ]
                 .filter(Boolean)
                 .join(" ")}
             >
+              {day.hasNote && (
+                <span
+                  className="calendar-note-indicator"
+                  title="This day has a note"
+                >
+                  📝
+                </span>
+              )}
+
               <span className="calendar-day-name">
                 {day.shortDay}
               </span>
@@ -366,7 +470,7 @@ function Dashboard() {
                     }`
                   : "Rest day"}
               </small>
-            </div>
+            </button>
           ))}
         </div>
 
@@ -381,6 +485,13 @@ function Dashboard() {
             Today
           </div>
 
+          <div>
+            <span className="calendar-legend-note">
+              📝
+            </span>
+            Saved note
+          </div>
+
           <p>
             {weeklyWorkoutCount} total{" "}
             {weeklyWorkoutCount === 1
@@ -390,8 +501,6 @@ function Dashboard() {
           </p>
         </div>
       </article>
-
-      {/* RECENT WORKOUTS AND WEEKLY GOAL */}
 
       <div className="dashboard-feature-grid">
         <article className="dashboard-card recent-workouts-card">
@@ -409,13 +518,15 @@ function Dashboard() {
 
           {recentWorkouts.length === 0 ? (
             <div className="dashboard-empty">
-              <div className="empty-state-icon">🏃</div>
+              <div className="empty-state-icon">
+                🏃
+              </div>
 
               <h3>No workouts recorded yet</h3>
 
               <p>
-                Add your first workout to begin tracking your
-                progress.
+                Add your first workout to begin tracking
+                your progress.
               </p>
 
               <Link
@@ -432,15 +543,23 @@ function Dashboard() {
                   className="recent-workout"
                   key={workout.id}
                 >
-                  <div className="recent-icon">🏋️</div>
+                  <div className="recent-icon">
+                    🏋️
+                  </div>
 
                   <div className="recent-info">
-                    <strong>{workout.workoutName}</strong>
-                    <span>{workout.exerciseName}</span>
+                    <strong>
+                      {workout.workoutName}
+                    </strong>
+
+                    <span>
+                      {workout.exerciseName}
+                    </span>
                   </div>
 
                   <div className="recent-date">
                     <span>{workout.date}</span>
+
                     <small>
                       {workout.duration || 0} min
                     </small>
@@ -457,7 +576,8 @@ function Dashboard() {
               <h2>Weekly Goal</h2>
 
               <p className="card-subtitle">
-                Complete {weeklyGoal} active workout days
+                Complete {weeklyGoal} active workout
+                days
               </p>
             </div>
 
@@ -466,8 +586,11 @@ function Dashboard() {
 
           <div className="goal-progress-information">
             <strong>
-              {Math.min(weeklyActiveDays, weeklyGoal)} /{" "}
-              {weeklyGoal}
+              {Math.min(
+                weeklyActiveDays,
+                weeklyGoal
+              )}{" "}
+              / {weeklyGoal}
             </strong>
 
             <span>active days completed</span>
@@ -487,7 +610,10 @@ function Dashboard() {
               ? "Great job! You completed your weekly goal."
               : `${
                   weeklyGoal -
-                  Math.min(weeklyActiveDays, weeklyGoal)
+                  Math.min(
+                    weeklyActiveDays,
+                    weeklyGoal
+                  )
                 } active ${
                   weeklyGoal -
                     Math.min(
@@ -509,8 +635,6 @@ function Dashboard() {
         </article>
       </div>
 
-      {/* PROGRESS SUMMARY */}
-
       <article className="dashboard-card progress-overview-card">
         <div className="card-title-row">
           <div>
@@ -521,7 +645,9 @@ function Dashboard() {
             </p>
           </div>
 
-          <Link to="/progress">View progress</Link>
+          <Link to="/progress">
+            View progress
+          </Link>
         </div>
 
         <div className="progress-bar dashboard-progress-bar">
@@ -541,6 +667,7 @@ function Dashboard() {
 
           <div className="dashboard-summary-item">
             <span>Pounds Lifted</span>
+
             <strong>
               {totalVolume.toLocaleString()}
             </strong>
@@ -548,15 +675,147 @@ function Dashboard() {
 
           <div className="dashboard-summary-item">
             <span>Workout Days</span>
-            <strong>{uniqueWorkoutDates.length}</strong>
+
+            <strong>
+              {uniqueWorkoutDates.length}
+            </strong>
           </div>
 
           <div className="dashboard-summary-item">
             <span>Weekly Goal</span>
-            <strong>{Math.round(weeklyProgress)}%</strong>
+
+            <strong>
+              {Math.round(weeklyProgress)}%
+            </strong>
           </div>
         </div>
       </article>
+
+      {selectedDay && (
+        <div
+          className="calendar-note-overlay"
+          onClick={closeDayNote}
+          role="presentation"
+        >
+          <section
+            className="calendar-note-modal"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="calendar-note-title"
+          >
+            <div className="calendar-note-header">
+              <div>
+                <span className="calendar-note-date-label">
+                  Daily Planner
+                </span>
+
+                <h2 id="calendar-note-title">
+                  {selectedDay.fullDate}
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                className="calendar-note-close"
+                onClick={closeDayNote}
+                aria-label="Close note window"
+              >
+                ×
+              </button>
+            </div>
+
+            {selectedDay.workouts.length > 0 && (
+              <div className="calendar-day-workouts">
+                <h3>Workouts scheduled</h3>
+
+                {selectedDay.workouts.map(
+                  (workout) => (
+                    <div
+                      className="calendar-modal-workout"
+                      key={workout.id}
+                    >
+                      <div>
+                        <strong>
+                          {workout.workoutName}
+                        </strong>
+
+                        <span>
+                          {workout.exerciseName}
+                        </span>
+                      </div>
+
+                      <small>
+                        {workout.duration || 0} min
+                      </small>
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+
+            <div className="calendar-note-form">
+              <label htmlFor="calendarNote">
+                Reminder or personal note
+              </label>
+
+              <textarea
+                id="calendarNote"
+                rows="6"
+                maxLength="500"
+                value={noteText}
+                onChange={(event) => {
+                  setNoteText(event.target.value);
+                  setNoteMessage("");
+                }}
+                placeholder="Example: Leg day at 6:00 PM, drink more water, or remember to stretch..."
+              />
+
+              <div className="calendar-note-character-count">
+                {noteText.length} / 500
+              </div>
+            </div>
+
+            {noteMessage && (
+              <div className="calendar-note-message">
+                {noteMessage}
+              </div>
+            )}
+
+            <div className="calendar-note-actions">
+              {calendarNotes[
+                selectedDay.dateKey
+              ] && (
+                <button
+                  type="button"
+                  className="calendar-note-delete"
+                  onClick={deleteDayNote}
+                >
+                  Delete Note
+                </button>
+              )}
+
+              <button
+                type="button"
+                className="calendar-note-cancel"
+                onClick={closeDayNote}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="calendar-note-save"
+                onClick={saveDayNote}
+              >
+                Save Note
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </section>
   );
 }
