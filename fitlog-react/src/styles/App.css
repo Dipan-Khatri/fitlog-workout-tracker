@@ -1299,3 +1299,312 @@ textarea {
     font-size: 34px;
   }
 }
+
+/* ==========================================
+   DASHBOARD QUOTE
+========================================== */
+
+.dashboard-quote-card {
+  position: relative;
+  display: flex;
+  min-height: 150px;
+  align-items: center;
+  gap: 22px;
+  margin: 28px 0;
+  padding: 27px 32px;
+  overflow: hidden;
+  border: 1px solid rgba(36, 108, 241, 0.18);
+  border-radius: 20px;
+  background:
+    linear-gradient(
+      120deg,
+      rgba(22, 86, 219, 0.98),
+      rgba(47, 123, 255, 0.93)
+    );
+  box-shadow: 0 16px 35px rgba(28, 87, 190, 0.2);
+  color: #ffffff;
+}
+
+.quote-icon {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 67px;
+  height: 67px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 30px;
+  backdrop-filter: blur(8px);
+}
+
+.quote-content {
+  position: relative;
+  z-index: 2;
+}
+
+.quote-label {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.quote-content blockquote {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(20px, 2.4vw, 29px);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.quote-content p {
+  margin: 9px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.quote-decoration {
+  position: absolute;
+  right: 18px;
+  bottom: -65px;
+  color: rgba(255, 255, 255, 0.1);
+  font-family: Georgia, serif;
+  font-size: 240px;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* ==========================================
+   WEEKLY WORKOUT CALENDAR
+========================================== */
+
+.weekly-calendar-card {
+  min-height: auto;
+  margin-top: 24px;
+}
+
+.weekly-calendar-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border: 1px solid #dce8f8;
+  border-radius: 30px;
+  background: #f2f7ff;
+}
+
+.weekly-calendar-summary strong {
+  color: #1e66ec;
+  font-size: 20px;
+}
+
+.weekly-calendar-summary span {
+  color: #71809a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.weekly-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(90px, 1fr));
+  gap: 13px;
+  margin-top: 28px;
+}
+
+.weekly-calendar-day {
+  position: relative;
+  display: flex;
+  min-height: 155px;
+  align-items: center;
+  justify-content: center;
+  padding: 17px 10px;
+  flex-direction: column;
+  border: 1px solid #e0e8f2;
+  border-radius: 15px;
+  background: #f8fbff;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.weekly-calendar-day:hover {
+  transform: translateY(-3px);
+  border-color: #b9cff3;
+  box-shadow: 0 11px 23px rgba(38, 85, 155, 0.1);
+}
+
+.weekly-calendar-day.today {
+  border: 2px solid #246cf1;
+  background: #eef5ff;
+}
+
+.weekly-calendar-day.completed {
+  border-color: #b8e1c6;
+  background:
+    linear-gradient(
+      145deg,
+      #f2fff6,
+      #e9f9ef
+    );
+}
+
+.weekly-calendar-day.today.completed {
+  border: 2px solid #246cf1;
+  background:
+    linear-gradient(
+      145deg,
+      #eef5ff,
+      #e8f8ee
+    );
+}
+
+.weekly-calendar-day.today::before {
+  position: absolute;
+  top: -10px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: #ffffff;
+  background: #246cf1;
+  content: "Today";
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.calendar-day-name {
+  color: #758399;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.calendar-day-number {
+  margin-top: 8px;
+  color: #102542;
+  font-size: 27px;
+}
+
+.calendar-status-icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  margin: 10px 0 7px;
+  place-items: center;
+  border-radius: 50%;
+  color: #8a98aa;
+  background: #e9eef5;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.weekly-calendar-day.completed .calendar-status-icon {
+  color: #ffffff;
+  background: #22a75a;
+  box-shadow: 0 6px 13px rgba(34, 167, 90, 0.22);
+}
+
+.weekly-calendar-day small {
+  color: #8491a3;
+  font-size: 11px;
+  text-align: center;
+}
+
+.weekly-calendar-day.completed small {
+  color: #27814c;
+  font-weight: 700;
+}
+
+.weekly-calendar-footer {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: 24px;
+  padding-top: 19px;
+  border-top: 1px solid #e6edf5;
+  color: #758399;
+  font-size: 13px;
+}
+
+.weekly-calendar-footer > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.weekly-calendar-footer p {
+  margin: 0 0 0 auto;
+  color: #51627a;
+  font-weight: 700;
+}
+
+.calendar-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.calendar-legend-dot.completed {
+  background: #22a75a;
+}
+
+.calendar-legend-dot.today {
+  background: #246cf1;
+}
+
+/* ==========================================
+   RESPONSIVE QUOTE AND CALENDAR
+========================================== */
+
+@media (max-width: 1150px) {
+  .weekly-calendar-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 750px) {
+  .dashboard-quote-card {
+    align-items: flex-start;
+    padding: 24px;
+    flex-direction: column;
+  }
+
+  .quote-icon {
+    width: 54px;
+    height: 54px;
+    font-size: 25px;
+  }
+
+  .weekly-calendar-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .weekly-calendar-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .weekly-calendar-footer p {
+    margin-left: 0;
+  }
+
+  .weekly-calendar-summary {
+    display: none;
+  }
+}
+
+@media (max-width: 450px) {
+  .weekly-calendar-grid {
+    grid-template-columns: 1fr;
+  }
+}

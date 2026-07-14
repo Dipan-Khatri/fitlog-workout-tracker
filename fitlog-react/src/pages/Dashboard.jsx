@@ -1,5 +1,64 @@
 import { Link } from "react-router-dom";
 
+const motivationalQuotes = [
+  {
+    text: "Consistency is more important than perfection.",
+    author: "FitLog",
+    icon: "🔥",
+  },
+  {
+    text: "Every workout brings you one step closer to your goal.",
+    author: "FitLog",
+    icon: "💪",
+  },
+  {
+    text: "Success starts with self-discipline.",
+    author: "FitLog",
+    icon: "🏆",
+  },
+  {
+    text: "Strong today. Stronger tomorrow.",
+    author: "FitLog",
+    icon: "⚡",
+  },
+  {
+    text: "Progress happens one workout at a time.",
+    author: "FitLog",
+    icon: "📈",
+  },
+  {
+    text: "Do not wait for motivation. Build a routine.",
+    author: "FitLog",
+    icon: "🎯",
+  },
+  {
+    text: "Your only competition is who you were yesterday.",
+    author: "FitLog",
+    icon: "🚀",
+  },
+];
+
+function getStartOfWeek(date) {
+  const currentDate = new Date(date);
+  const day = currentDate.getDay();
+
+  // Make Monday the first day of the week.
+  const difference = day === 0 ? -6 : 1 - day;
+
+  currentDate.setDate(currentDate.getDate() + difference);
+  currentDate.setHours(0, 0, 0, 0);
+
+  return currentDate;
+}
+
+function formatDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
 function Dashboard() {
   const currentUserId =
     localStorage.getItem("fitlogCurrentUserId");
@@ -11,11 +70,19 @@ function Dashboard() {
     ? `fitlogWorkouts_${currentUserId}`
     : null;
 
-  const workouts = workoutKey
-    ? JSON.parse(localStorage.getItem(workoutKey)) || []
-    : [];
+  let workouts = [];
 
-  const currentHour = new Date().getHours();
+  try {
+    workouts = workoutKey
+      ? JSON.parse(localStorage.getItem(workoutKey)) || []
+      : [];
+  } catch (error) {
+    console.error("Unable to load workouts:", error);
+    workouts = [];
+  }
+
+  const now = new Date();
+  const currentHour = now.getHours();
 
   let greeting = "Hello";
   let greetingEmoji = "👋";
@@ -31,12 +98,21 @@ function Dashboard() {
     greetingEmoji = "🌙";
   }
 
-  const today = new Date().toLocaleDateString("en-US", {
+  const today = now.toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
     year: "numeric",
   });
+
+  // The quote changes once each day instead of every refresh.
+  const startOfYear = new Date(now.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor(
+    (now - startOfYear) / (1000 * 60 * 60 * 24)
+  );
+
+  const dailyQuote =
+    motivationalQuotes[dayOfYear % motivationalQuotes.length];
 
   const totalDuration = workouts.reduce(
     (total, workout) =>
@@ -75,14 +151,70 @@ function Dashboard() {
     ),
   ];
 
-  const currentStreak = uniqueWorkoutDates.length;
+  /*
+    WEEKLY CALENDAR
+    Creates Monday through Sunday for the current week.
+  */
+  const startOfWeek = getStartOfWeek(now);
+
+  const weeklyDays = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(startOfWeek);
+    date.setDate(startOfWeek.getDate() + index);
+
+    const dateKey = formatDateKey(date);
+
+    const workoutsForDay = workouts.filter(
+      (workout) => workout.date === dateKey
+    );
+
+    return {
+      date,
+      dateKey,
+      shortDay: date.toLocaleDateString("en-US", {
+        weekday: "short",
+      }),
+      dayNumber: date.getDate(),
+      isToday: dateKey === formatDateKey(now),
+      hasWorkout: workoutsForDay.length > 0,
+      workoutCount: workoutsForDay.length,
+    };
+  });
+
+  const weeklyWorkoutCount = weeklyDays.reduce(
+    (total, day) => total + day.workoutCount,
+    0
+  );
+
+  const weeklyActiveDays = weeklyDays.filter(
+    (day) => day.hasWorkout
+  ).length;
 
   const weeklyGoal = 5;
 
   const weeklyProgress = Math.min(
-    (workouts.length / weeklyGoal) * 100,
+    (weeklyActiveDays / weeklyGoal) * 100,
     100
   );
+
+  /*
+    Simple streak calculation:
+    Counts consecutive workout dates going backward from today.
+  */
+  const workoutDateSet = new Set(uniqueWorkoutDates);
+  let currentStreak = 0;
+  const streakDate = new Date(now);
+  streakDate.setHours(0, 0, 0, 0);
+
+  // Allow a streak to continue when the user has not worked out today
+  // but did work out yesterday.
+  if (!workoutDateSet.has(formatDateKey(streakDate))) {
+    streakDate.setDate(streakDate.getDate() - 1);
+  }
+
+  while (workoutDateSet.has(formatDateKey(streakDate))) {
+    currentStreak += 1;
+    streakDate.setDate(streakDate.getDate() - 1);
+  }
 
   return (
     <section className="content-page dashboard-page">
@@ -96,8 +228,8 @@ function Dashboard() {
           </h1>
 
           <p className="dashboard-motivation">
-            Stay consistent. Every workout brings you
-            closer to your fitness goal.
+            Stay consistent. Every workout brings you closer
+            to your fitness goal.
           </p>
         </div>
 
@@ -109,6 +241,32 @@ function Dashboard() {
           Add Workout
         </Link>
       </header>
+
+      {/* QUOTE OF THE DAY */}
+
+      <article className="dashboard-quote-card">
+        <div className="quote-icon" aria-hidden="true">
+          {dailyQuote.icon}
+        </div>
+
+        <div className="quote-content">
+          <span className="quote-label">
+            Motivation of the Day
+          </span>
+
+          <blockquote>
+            “{dailyQuote.text}”
+          </blockquote>
+
+          <p>— {dailyQuote.author}</p>
+        </div>
+
+        <div className="quote-decoration" aria-hidden="true">
+          ”
+        </div>
+      </article>
+
+      {/* STATISTICS */}
 
       <div className="stat-grid">
         <article className="stat-card">
@@ -155,6 +313,86 @@ function Dashboard() {
         </article>
       </div>
 
+      {/* WEEKLY CALENDAR */}
+
+      <article className="dashboard-card weekly-calendar-card">
+        <div className="card-title-row">
+          <div>
+            <h2>Weekly Activity</h2>
+
+            <p className="card-subtitle">
+              Your workout activity from Monday through Sunday
+            </p>
+          </div>
+
+          <div className="weekly-calendar-summary">
+            <strong>{weeklyActiveDays}</strong>
+            <span>
+              active {weeklyActiveDays === 1 ? "day" : "days"}
+            </span>
+          </div>
+        </div>
+
+        <div className="weekly-calendar-grid">
+          {weeklyDays.map((day) => (
+            <div
+              key={day.dateKey}
+              className={[
+                "weekly-calendar-day",
+                day.isToday ? "today" : "",
+                day.hasWorkout ? "completed" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+            >
+              <span className="calendar-day-name">
+                {day.shortDay}
+              </span>
+
+              <strong className="calendar-day-number">
+                {day.dayNumber}
+              </strong>
+
+              <div className="calendar-status-icon">
+                {day.hasWorkout ? "✓" : "—"}
+              </div>
+
+              <small>
+                {day.hasWorkout
+                  ? `${day.workoutCount} ${
+                      day.workoutCount === 1
+                        ? "workout"
+                        : "workouts"
+                    }`
+                  : "Rest day"}
+              </small>
+            </div>
+          ))}
+        </div>
+
+        <div className="weekly-calendar-footer">
+          <div>
+            <span className="calendar-legend-dot completed" />
+            Workout completed
+          </div>
+
+          <div>
+            <span className="calendar-legend-dot today" />
+            Today
+          </div>
+
+          <p>
+            {weeklyWorkoutCount} total{" "}
+            {weeklyWorkoutCount === 1
+              ? "workout"
+              : "workouts"}{" "}
+            recorded this week
+          </p>
+        </div>
+      </article>
+
+      {/* RECENT WORKOUTS AND WEEKLY GOAL */}
+
       <div className="dashboard-feature-grid">
         <article className="dashboard-card recent-workouts-card">
           <div className="card-title-row">
@@ -176,8 +414,8 @@ function Dashboard() {
               <h3>No workouts recorded yet</h3>
 
               <p>
-                Add your first workout to begin tracking
-                your progress.
+                Add your first workout to begin tracking your
+                progress.
               </p>
 
               <Link
@@ -197,18 +435,12 @@ function Dashboard() {
                   <div className="recent-icon">🏋️</div>
 
                   <div className="recent-info">
-                    <strong>
-                      {workout.workoutName}
-                    </strong>
-
-                    <span>
-                      {workout.exerciseName}
-                    </span>
+                    <strong>{workout.workoutName}</strong>
+                    <span>{workout.exerciseName}</span>
                   </div>
 
                   <div className="recent-date">
                     <span>{workout.date}</span>
-
                     <small>
                       {workout.duration || 0} min
                     </small>
@@ -225,7 +457,7 @@ function Dashboard() {
               <h2>Weekly Goal</h2>
 
               <p className="card-subtitle">
-                Complete {weeklyGoal} workouts
+                Complete {weeklyGoal} active workout days
               </p>
             </div>
 
@@ -234,11 +466,11 @@ function Dashboard() {
 
           <div className="goal-progress-information">
             <strong>
-              {Math.min(workouts.length, weeklyGoal)} /{" "}
+              {Math.min(weeklyActiveDays, weeklyGoal)} /{" "}
               {weeklyGoal}
             </strong>
 
-            <span>workouts completed</span>
+            <span>active days completed</span>
           </div>
 
           <div className="weekly-goal-progress">
@@ -251,20 +483,20 @@ function Dashboard() {
           </div>
 
           <p className="goal-message">
-            {workouts.length >= weeklyGoal
+            {weeklyActiveDays >= weeklyGoal
               ? "Great job! You completed your weekly goal."
               : `${
                   weeklyGoal -
-                  Math.min(workouts.length, weeklyGoal)
-                } workout${
+                  Math.min(weeklyActiveDays, weeklyGoal)
+                } active ${
                   weeklyGoal -
                     Math.min(
-                      workouts.length,
+                      weeklyActiveDays,
                       weeklyGoal
                     ) ===
                   1
-                    ? ""
-                    : "s"
+                    ? "day"
+                    : "days"
                 } remaining this week.`}
           </p>
 
@@ -277,6 +509,8 @@ function Dashboard() {
         </article>
       </div>
 
+      {/* PROGRESS SUMMARY */}
+
       <article className="dashboard-card progress-overview-card">
         <div className="card-title-row">
           <div>
@@ -287,9 +521,7 @@ function Dashboard() {
             </p>
           </div>
 
-          <Link to="/progress">
-            View progress
-          </Link>
+          <Link to="/progress">View progress</Link>
         </div>
 
         <div className="progress-bar dashboard-progress-bar">
@@ -320,10 +552,8 @@ function Dashboard() {
           </div>
 
           <div className="dashboard-summary-item">
-            <span>Weekly Progress</span>
-            <strong>
-              {Math.round(weeklyProgress)}%
-            </strong>
+            <span>Weekly Goal</span>
+            <strong>{Math.round(weeklyProgress)}%</strong>
           </div>
         </div>
       </article>
