@@ -7,24 +7,30 @@ function History() {
     JSON.parse(localStorage.getItem("fitlogWorkouts")) || [];
 
   return (
-    <main className="page-shell">
-      <div className="history-header">
+    <section className="content-page">
+      <header className="history-header">
         <div>
           <h1>Workout History</h1>
-          <p>Review your past sessions and manage your workouts.</p>
+          <p>
+            Review and manage your saved workout sessions.
+          </p>
         </div>
 
-        <Link className="primary-link" to="/add-workout">
+        <Link to="/add-workout" className="primary-link">
           + Add Workout
         </Link>
-      </div>
+      </header>
 
       {workouts.length === 0 ? (
         <div className="empty-state">
           <h2>No workouts recorded yet</h2>
-          <p>Add your first workout to begin tracking progress.</p>
 
-          <Link className="primary-link" to="/add-workout">
+          <p>
+            Add your first workout to begin tracking
+            progress.
+          </p>
+
+          <Link to="/add-workout" className="primary-link">
             Add Workout
           </Link>
         </div>
@@ -54,11 +60,15 @@ function History() {
                     {workout.sets} × {workout.reps}
                   </td>
                   <td>{workout.weight} lbs</td>
+
                   <td>
                     <button
                       className="edit-small-button"
+                      type="button"
                       onClick={() =>
-                        navigate(`/edit-workout/${workout.id}`)
+                        navigate(
+                          `/edit-workout/${workout.id}`
+                        )
                       }
                     >
                       Edit
@@ -70,7 +80,7 @@ function History() {
           </table>
         </div>
       )}
-    </main>
+    </section>
   );
 }
 

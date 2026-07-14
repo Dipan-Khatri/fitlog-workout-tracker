@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import WorkoutForm from "../components/WorkoutForm";
 
 function AddWorkout() {
@@ -14,9 +14,11 @@ function AddWorkout() {
       createdAt: new Date().toISOString(),
     };
 
+    const updatedWorkouts = [...savedWorkouts, workoutToSave];
+
     localStorage.setItem(
       "fitlogWorkouts",
-      JSON.stringify([...savedWorkouts, workoutToSave])
+      JSON.stringify(updatedWorkouts)
     );
 
     alert("Workout saved successfully!");
@@ -49,4 +51,4 @@ function AddWorkout() {
   );
 }
 
-export default AddWorkout;
+export default AddWorkout; 

@@ -24,16 +24,16 @@ function WorkoutForm({
     ...initialWorkout,
   });
 
-  const handleChange = (event) => {
+  function handleChange(event) {
     const { name, value } = event.target;
 
-    setFormData((previousData) => ({
-      ...previousData,
+    setFormData((currentData) => ({
+      ...currentData,
       [name]: value,
     }));
-  };
+  }
 
-  const handleSubmit = (event) => {
+  function handleSubmit(event) {
     event.preventDefault();
 
     if (
@@ -41,7 +41,9 @@ function WorkoutForm({
       !formData.date ||
       !formData.exerciseName.trim()
     ) {
-      alert("Please enter the workout name, date, and exercise name.");
+      alert(
+        "Please enter the workout name, date, and exercise name."
+      );
       return;
     }
 
@@ -52,15 +54,20 @@ function WorkoutForm({
       reps: Number(formData.reps) || 0,
       weight: Number(formData.weight) || 0,
     });
-  };
+  }
 
   return (
     <div className="workout-layout">
-      <form className="workout-form-card" onSubmit={handleSubmit}>
+      <form
+        className="workout-form-card"
+        onSubmit={handleSubmit}
+      >
         <div className="form-grid">
           <div className="form-group">
-            <label>Workout Name</label>
+            <label htmlFor="workoutName">Workout Name</label>
+
             <input
+              id="workoutName"
               name="workoutName"
               value={formData.workoutName}
               onChange={handleChange}
@@ -69,8 +76,10 @@ function WorkoutForm({
           </div>
 
           <div className="form-group">
-            <label>Date</label>
+            <label htmlFor="date">Date</label>
+
             <input
+              id="date"
               name="date"
               type="date"
               value={formData.date}
@@ -79,8 +88,12 @@ function WorkoutForm({
           </div>
 
           <div className="form-group">
-            <label>Exercise Name</label>
+            <label htmlFor="exerciseName">
+              Exercise Name
+            </label>
+
             <input
+              id="exerciseName"
               name="exerciseName"
               value={formData.exerciseName}
               onChange={handleChange}
@@ -89,8 +102,12 @@ function WorkoutForm({
           </div>
 
           <div className="form-group">
-            <label>Duration (minutes)</label>
+            <label htmlFor="duration">
+              Duration (minutes)
+            </label>
+
             <input
+              id="duration"
               name="duration"
               type="number"
               min="0"
@@ -101,8 +118,10 @@ function WorkoutForm({
           </div>
 
           <div className="form-group">
-            <label>Sets</label>
+            <label htmlFor="sets">Sets</label>
+
             <input
+              id="sets"
               name="sets"
               type="number"
               min="0"
@@ -113,8 +132,10 @@ function WorkoutForm({
           </div>
 
           <div className="form-group">
-            <label>Reps</label>
+            <label htmlFor="reps">Reps</label>
+
             <input
+              id="reps"
               name="reps"
               type="number"
               min="0"
@@ -125,11 +146,14 @@ function WorkoutForm({
           </div>
 
           <div className="form-group form-group-full">
-            <label>Weight (lbs)</label>
+            <label htmlFor="weight">Weight (lbs)</label>
+
             <input
+              id="weight"
               name="weight"
               type="number"
               min="0"
+              step="0.1"
               value={formData.weight}
               onChange={handleChange}
               placeholder="e.g., 135"
@@ -137,9 +161,12 @@ function WorkoutForm({
           </div>
 
           <div className="form-group form-group-full">
-            <label>Notes</label>
+            <label htmlFor="notes">Notes</label>
+
             <textarea
+              id="notes"
               name="notes"
+              rows="4"
               value={formData.notes}
               onChange={handleChange}
               placeholder="Add notes about your workout..."
@@ -171,26 +198,40 @@ function WorkoutForm({
       </form>
 
       <aside className="summary-card">
-        <h3>Workout Summary</h3>
+        <div className="summary-header">
+          <div className="summary-icon">✓</div>
 
-        <p>
-          <strong>Workout:</strong>{" "}
-          {formData.workoutName || "—"}
-        </p>
+          <div>
+            <h3>Workout Summary</h3>
+            <p>Review your workout details.</p>
+          </div>
+        </div>
 
-        <p>
-          <strong>Date:</strong> {formData.date || "—"}
-        </p>
+        <div className="summary-row">
+          <span>Workout</span>
+          <strong>{formData.workoutName || "—"}</strong>
+        </div>
 
-        <p>
-          <strong>Exercise:</strong>{" "}
-          {formData.exerciseName || "—"}
-        </p>
+        <div className="summary-row">
+          <span>Date</span>
+          <strong>{formData.date || "—"}</strong>
+        </div>
 
-        <p>{formData.duration || 0} minutes</p>
-        <p>{formData.sets || 0} sets</p>
-        <p>{formData.reps || 0} reps</p>
-        <p>{formData.weight || 0} lbs</p>
+        <div className="summary-row">
+          <span>Exercise</span>
+          <strong>{formData.exerciseName || "—"}</strong>
+        </div>
+
+        <div className="summary-details">
+          <p>Duration: {formData.duration || 0} minutes</p>
+          <p>Sets: {formData.sets || 0}</p>
+          <p>Reps: {formData.reps || 0}</p>
+          <p>Weight: {formData.weight || 0} lbs</p>
+        </div>
+
+        <div className="ready-message">
+          ● Status: Ready to Save
+        </div>
       </aside>
     </div>
   );

@@ -1,4 +1,8 @@
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+} from "react-router-dom";
+
 import WorkoutForm from "../components/WorkoutForm";
 
 function EditWorkout() {
@@ -6,13 +10,14 @@ function EditWorkout() {
   const { id } = useParams();
 
   const savedWorkouts =
-    JSON.parse(localStorage.getItem("fitlogWorkouts")) || [];
+    JSON.parse(localStorage.getItem("fitlogWorkouts")) ||
+    [];
 
   const selectedWorkout = savedWorkouts.find(
     (workout) => workout.id === id
   );
 
-  const updateWorkout = (updatedWorkout) => {
+  function updateWorkout(updatedWorkout) {
     const updatedWorkouts = savedWorkouts.map((workout) =>
       workout.id === id
         ? {
@@ -30,9 +35,9 @@ function EditWorkout() {
 
     alert("Workout updated successfully!");
     navigate("/history");
-  };
+  }
 
-  const deleteWorkout = () => {
+  function deleteWorkout() {
     const confirmed = window.confirm(
       "Are you sure you want to delete this workout?"
     );
@@ -52,41 +57,38 @@ function EditWorkout() {
 
     alert("Workout deleted successfully.");
     navigate("/history");
-  };
+  }
 
   if (!selectedWorkout) {
     return (
-      <main className="page-shell">
+      <section className="content-page">
         <div className="empty-state">
           <h2>Workout not found</h2>
 
           <button
             className="primary-button"
+            type="button"
             onClick={() => navigate("/history")}
           >
             Return to History
           </button>
         </div>
-      </main>
+      </section>
     );
   }
 
   return (
-    <main className="page-shell">
-      <div className="page-header">
-        <button
-          className="back-button"
-          type="button"
-          onClick={() => navigate("/history")}
-        >
-          ←
-        </button>
-
+    <section className="content-page">
+      <header className="page-header">
         <div>
           <h1>Edit / Delete Workout</h1>
-          <p>Update your workout details or remove it from your plan.</p>
+
+          <p>
+            Update your workout details or remove the
+            workout.
+          </p>
         </div>
-      </div>
+      </header>
 
       <WorkoutForm
         initialWorkout={selectedWorkout}
@@ -96,8 +98,8 @@ function EditWorkout() {
         onDelete={deleteWorkout}
         onCancel={() => navigate("/history")}
       />
-    </main>
+    </section>
   );
 }
 
-export default EditWorkout; 
+export default EditWorkout;
