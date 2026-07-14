@@ -5,6 +5,10 @@ function Login() {
   const navigate = useNavigate();
 
   const [mode, setMode] = useState("signin");
+  const [message, setMessage] = useState({
+    type: "",
+    text: "",
+  });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -20,96 +24,189 @@ function Login() {
       ...currentData,
       [name]: value,
     }));
+
+    setMessage({
+      type: "",
+      text: "",
+    });
+  }
+
+  function changeMode(nextMode) {
+    setMode(nextMode);
+
+    setMessage({
+      type: "",
+      text: "",
+    });
+
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+  }
+
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function getPasswordChecks(password) {
+    return {
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      special: /[^A-Za-z0-9]/.test(password),
+    };
   }
 
   function passwordIsValid(password) {
-    const hasEightCharacters = password.length >= 8;
-    const hasUppercase = /[A-Z]/.test(password);
-    const hasLowercase = /[a-z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
-    const hasSpecialCharacter = /[^A-Za-z0-9]/.test(password);
+    const checks = getPasswordChecks(password);
 
-    return (
-      hasEightCharacters &&
-      hasUppercase &&
-      hasLowercase &&
-      hasNumber &&
-      hasSpecialCharacter
-    );
+    return Object.values(checks).every(Boolean);
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
-
-    if (!formData.email.trim() || !formData.password.trim()) {
-      alert("Please enter your email and password.");
-      return;
-    }
-
-    if (mode === "signup") {
-      if (!formData.name.trim()) {
-        alert("Please enter your name.");
-        return;
-      }
-
-      if (!passwordIsValid(formData.password)) {
-        alert(
-          "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character."
-        );
-        return;
-      }
-
-      if (formData.password !== formData.confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-      }
-
-      const newUser = {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-      };
-
-      localStorage.setItem("fitlogUser", JSON.stringify(newUser));
-
-      alert("Account created successfully. You can now sign in.");
-
-      setMode("signin");
-
-      setFormData({
-        name: "",
-        email: formData.email,
-        password: "",
-        confirmPassword: "",
+  function handleCreateAccount() {
+    if (!formData.name.trim()) {
+      setMessage({
+        type: "error",
+        text: "Please enter your full name.",
       });
 
       return;
     }
 
-    const savedUser = JSON.parse(
-      localStorage.getItem("fitlogUser")
+    if (!validateEmail(formData.email)) {
+      setMessage({
+        type: "error",
+        text: "Please enter a valid email address.",
+      });
+
+      return;
+    }
+
+    if (!passwordIsValid(formData.password)) {
+      setMessage({
+        type: "error",
+        text: "Your password does not meet all requirements.",
+      });
+
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setMessage({
+        type: "error",
+        text: "The passwords do not match.",
+      });
+
+      return;
+    }
+
+    const existingUsers =
+      JSON.parse(localStorage.getItem("fitlogUsers")) || [];
+
+    const emailAlreadyExists = existingUsers.some(
+      (user) =>
+        user.email.toLowerCase() ===
+        formData.email.trim().toLowerCase()
     );
 
-    if (
-      savedUser &&
-      (savedUser.email !== formData.email ||
-        savedUser.password !== formData.password)
-    ) {
-      alert("Incorrect email or password.");
+    if (emailAlreadyExists) {
+      setMessage({
+        type: "error",
+        text: "An account with this email already exists.",
+      });
+
+      return;
+    }
+
+    const newUser = {
+      id: crypto.randomUUID(),
+      name: formData.name.trim(),
+      email: formData.email.trim().toLowerCase(),
+      password: formData.password,
+      createdAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem(
+      "fitlogUsers",
+      JSON.stringify([...existingUsers, newUser])
+    );
+
+    setMode("signin");
+
+    setFormData({
+      name: "",
+      email: newUser.email,
+      password: "",
+      confirmPassword: "",
+    });
+
+    setMessage({
+      type: "success",
+      text: "Account created successfully. You can now sign in.",
+    });
+  }
+
+  function handleSignIn() {
+    if (!validateEmail(formData.email)) {
+      setMessage({
+        type: "error",
+        text: "Please enter a valid email address.",
+      });
+
+      return;
+    }
+
+    if (!formData.password.trim()) {
+      setMessage({
+        type: "error",
+        text: "Please enter your password.",
+      });
+
+      return;
+    }
+
+    const savedUsers =
+      JSON.parse(localStorage.getItem("fitlogUsers")) || [];
+
+    const matchedUser = savedUsers.find(
+      (user) =>
+        user.email.toLowerCase() ===
+          formData.email.trim().toLowerCase() &&
+        user.password === formData.password
+    );
+
+    if (!matchedUser) {
+      setMessage({
+        type: "error",
+        text: "Incorrect email or password.",
+      });
+
       return;
     }
 
     localStorage.setItem("fitlogLoggedIn", "true");
-    localStorage.setItem("fitlogUserEmail", formData.email);
-
-    if (savedUser?.name) {
-      localStorage.setItem("fitlogUserName", savedUser.name);
-    } else {
-      localStorage.setItem("fitlogUserName", "User");
-    }
+    localStorage.setItem("fitlogCurrentUserId", matchedUser.id);
+    localStorage.setItem("fitlogUserEmail", matchedUser.email);
+    localStorage.setItem("fitlogUserName", matchedUser.name);
 
     navigate("/dashboard");
   }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    if (mode === "signup") {
+      handleCreateAccount();
+    } else {
+      handleSignIn();
+    }
+  }
+
+  const passwordChecks = getPasswordChecks(formData.password);
 
   return (
     <main className="fitlog-login-page">
@@ -131,7 +228,7 @@ function Login() {
                 ? "auth-tab active"
                 : "auth-tab"
             }
-            onClick={() => setMode("signin")}
+            onClick={() => changeMode("signin")}
           >
             Sign In
           </button>
@@ -143,7 +240,7 @@ function Login() {
                 ? "auth-tab active"
                 : "auth-tab"
             }
-            onClick={() => setMode("signup")}
+            onClick={() => changeMode("signup")}
           >
             Create Account
           </button>
@@ -158,8 +255,20 @@ function Login() {
         <p className="login-subtitle">
           {mode === "signin"
             ? "Sign in to continue tracking your workouts."
-            : "Create an account to start your fitness journey."}
+            : "Create an account to begin your fitness journey."}
         </p>
+
+        {message.text && (
+          <div
+            className={
+              message.type === "success"
+                ? "auth-message success"
+                : "auth-message error"
+            }
+          >
+            {message.text}
+          </div>
+        )}
 
         <form className="login-form" onSubmit={handleSubmit}>
           {mode === "signup" && (
@@ -173,6 +282,7 @@ function Login() {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your full name"
+                autoComplete="name"
               />
             </>
           )}
@@ -208,12 +318,51 @@ function Login() {
           {mode === "signup" && (
             <>
               <div className="password-requirements">
-                <p>Password must include:</p>
-                <span>• At least 8 characters</span>
-                <span>• One uppercase letter</span>
-                <span>• One lowercase letter</span>
-                <span>• One number</span>
-                <span>• One special character</span>
+                <p>Password requirements</p>
+
+                <span
+                  className={
+                    passwordChecks.length ? "valid" : ""
+                  }
+                >
+                  {passwordChecks.length ? "✓" : "○"} At least 8
+                  characters
+                </span>
+
+                <span
+                  className={
+                    passwordChecks.uppercase ? "valid" : ""
+                  }
+                >
+                  {passwordChecks.uppercase ? "✓" : "○"} One
+                  uppercase letter
+                </span>
+
+                <span
+                  className={
+                    passwordChecks.lowercase ? "valid" : ""
+                  }
+                >
+                  {passwordChecks.lowercase ? "✓" : "○"} One
+                  lowercase letter
+                </span>
+
+                <span
+                  className={
+                    passwordChecks.number ? "valid" : ""
+                  }
+                >
+                  {passwordChecks.number ? "✓" : "○"} One number
+                </span>
+
+                <span
+                  className={
+                    passwordChecks.special ? "valid" : ""
+                  }
+                >
+                  {passwordChecks.special ? "✓" : "○"} One special
+                  character
+                </span>
               </div>
 
               <label htmlFor="confirmPassword">
@@ -248,7 +397,7 @@ function Login() {
             type="button"
             className="switch-auth-button"
             onClick={() =>
-              setMode(
+              changeMode(
                 mode === "signin" ? "signup" : "signin"
               )
             }

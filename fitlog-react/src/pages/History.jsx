@@ -3,17 +3,22 @@ import { Link, useNavigate } from "react-router-dom";
 function History() {
   const navigate = useNavigate();
 
-  const workouts =
-    JSON.parse(localStorage.getItem("fitlogWorkouts")) || [];
+  const currentUserId = localStorage.getItem("fitlogCurrentUserId");
+
+  const workoutKey = currentUserId
+    ? `fitlogWorkouts_${currentUserId}`
+    : null;
+
+  const workouts = workoutKey
+    ? JSON.parse(localStorage.getItem(workoutKey)) || []
+    : [];
 
   return (
     <section className="content-page">
       <header className="history-header">
         <div>
           <h1>Workout History</h1>
-          <p>
-            Review and manage your saved workout sessions.
-          </p>
+          <p>Review and manage your saved workout sessions.</p>
         </div>
 
         <Link to="/add-workout" className="primary-link">
@@ -26,8 +31,7 @@ function History() {
           <h2>No workouts recorded yet</h2>
 
           <p>
-            Add your first workout to begin tracking
-            progress.
+            Add your first workout to begin tracking progress.
           </p>
 
           <Link to="/add-workout" className="primary-link">
@@ -66,9 +70,7 @@ function History() {
                       className="edit-small-button"
                       type="button"
                       onClick={() =>
-                        navigate(
-                          `/edit-workout/${workout.id}`
-                        )
+                        navigate(`/edit-workout/${workout.id}`)
                       }
                     >
                       Edit

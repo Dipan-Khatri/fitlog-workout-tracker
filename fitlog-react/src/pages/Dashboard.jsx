@@ -1,12 +1,19 @@
 import { Link } from "react-router-dom";
 
 function Dashboard() {
-  const workouts =
-    JSON.parse(localStorage.getItem("fitlogWorkouts")) || [];
+  const currentUserId = localStorage.getItem("fitlogCurrentUserId");
+  const userName = localStorage.getItem("fitlogUserName") || "User";
+
+  const workoutKey = currentUserId
+    ? `fitlogWorkouts_${currentUserId}`
+    : null;
+
+  const workouts = workoutKey
+    ? JSON.parse(localStorage.getItem(workoutKey)) || []
+    : [];
 
   const totalDuration = workouts.reduce(
-    (total, workout) =>
-      total + Number(workout.duration || 0),
+    (total, workout) => total + Number(workout.duration || 0),
     0
   );
 
@@ -19,22 +26,17 @@ function Dashboard() {
     0
   );
 
-  const recentWorkouts = [...workouts]
-    .reverse()
-    .slice(0, 5);
+  const recentWorkouts = [...workouts].reverse().slice(0, 5);
 
   return (
     <section className="content-page">
       <header className="dashboard-header">
         <div>
-          <h1>Welcome back, User!</h1>
+          <h1>Welcome back, {userName}!</h1>
           <p>Here is your fitness overview.</p>
         </div>
 
-        <Link
-          to="/add-workout"
-          className="dashboard-add-button"
-        >
+        <Link to="/add-workout" className="dashboard-add-button">
           + Add Workout
         </Link>
       </header>
@@ -63,9 +65,7 @@ function Dashboard() {
 
           <div>
             <span>Total Volume</span>
-            <strong>
-              {totalVolume.toLocaleString()} lbs
-            </strong>
+            <strong>{totalVolume.toLocaleString()} lbs</strong>
           </div>
         </article>
 
@@ -76,7 +76,7 @@ function Dashboard() {
             <span>Current Streak</span>
             <strong>
               {workouts.length > 0
-                ? `${workouts.length} day`
+                ? `${workouts.length} day${workouts.length === 1 ? "" : "s"}`
                 : "0 days"}
             </strong>
           </div>
@@ -87,14 +87,12 @@ function Dashboard() {
         <article className="dashboard-card">
           <div className="card-title-row">
             <h2>Recent Workouts</h2>
-
             <Link to="/history">View all</Link>
           </div>
 
           {recentWorkouts.length === 0 ? (
             <div className="dashboard-empty">
               <p>No workouts recorded yet.</p>
-
               <Link to="/add-workout">
                 Add your first workout
               </Link>
@@ -102,10 +100,7 @@ function Dashboard() {
           ) : (
             <div className="recent-workout-list">
               {recentWorkouts.map((workout) => (
-                <div
-                  className="recent-workout"
-                  key={workout.id}
-                >
+                <div className="recent-workout" key={workout.id}>
                   <div className="recent-icon">🏋</div>
 
                   <div className="recent-info">
@@ -130,10 +125,7 @@ function Dashboard() {
             <div
               className="progress-bar-fill"
               style={{
-                width: `${Math.min(
-                  workouts.length * 12,
-                  100
-                )}%`,
+                width: `${Math.min(workouts.length * 12, 100)}%`,
               }}
             />
           </div>
@@ -149,9 +141,7 @@ function Dashboard() {
             </div>
 
             <div>
-              <strong>
-                {totalVolume.toLocaleString()}
-              </strong>
+              <strong>{totalVolume.toLocaleString()}</strong>
               <span>Total pounds lifted</span>
             </div>
           </div>

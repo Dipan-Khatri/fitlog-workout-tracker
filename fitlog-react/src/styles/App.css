@@ -790,3 +790,33 @@ textarea {
   font-weight: 700;
   cursor: pointer;
 }
+
+.auth-message {
+  margin: 18px 0;
+  padding: 13px 15px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.auth-message.success {
+  color: #13753b;
+  border: 1px solid #b9e5c7;
+  background: #e9f8ee;
+}
+
+.auth-message.error {
+  color: #b42334;
+  border: 1px solid #f2bdc4;
+  background: #fff0f2;
+}
+
+.password-requirements span {
+  color: #7d899b;
+}
+
+.password-requirements span.valid {
+  color: #148343;
+  font-weight: 700;
+}

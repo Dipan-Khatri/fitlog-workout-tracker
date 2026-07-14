@@ -9,9 +9,14 @@ function Navbar() {
 
   function handleLogout() {
     localStorage.removeItem("fitlogLoggedIn");
+    localStorage.removeItem("fitlogCurrentUserId");
     localStorage.removeItem("fitlogUserEmail");
+    localStorage.removeItem("fitlogUserName");
+
     navigate("/login");
   }
+
+  const userName = localStorage.getItem("fitlogUserName") || "User";
 
   return (
     <aside className="fitlog-sidebar">
@@ -25,22 +30,22 @@ function Navbar() {
 
       <nav className="sidebar-navigation">
         <NavLink to="/dashboard" className={getLinkClass}>
-          <span>⌂</span>
+          <span aria-hidden="true">⌂</span>
           Dashboard
         </NavLink>
 
         <NavLink to="/add-workout" className={getLinkClass}>
-          <span>＋</span>
+          <span aria-hidden="true">＋</span>
           Add Workout
         </NavLink>
 
         <NavLink to="/history" className={getLinkClass}>
-          <span>◷</span>
+          <span aria-hidden="true">◷</span>
           History
         </NavLink>
 
         <NavLink to="/progress" className={getLinkClass}>
-          <span>▥</span>
+          <span aria-hidden="true">▥</span>
           Progress
         </NavLink>
       </nav>
@@ -50,15 +55,17 @@ function Navbar() {
         type="button"
         onClick={handleLogout}
       >
-        <span>↪</span>
+        <span aria-hidden="true">↪</span>
         Logout
       </button>
 
       <div className="sidebar-user">
-        <div className="user-avatar">U</div>
+        <div className="user-avatar">
+          {userName.charAt(0).toUpperCase()}
+        </div>
 
         <div>
-          <strong>User</strong>
+          <strong>{userName}</strong>
           <small>FitLog Member</small>
         </div>
       </div>

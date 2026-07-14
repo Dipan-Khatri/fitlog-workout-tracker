@@ -1,22 +1,26 @@
 function Progress() {
-  const workouts =
-    JSON.parse(localStorage.getItem("fitlogWorkouts")) || [];
+  const currentUserId = localStorage.getItem("fitlogCurrentUserId");
+
+  const workoutKey = currentUserId
+    ? `fitlogWorkouts_${currentUserId}`
+    : null;
+
+  const workouts = workoutKey
+    ? JSON.parse(localStorage.getItem(workoutKey)) || []
+    : [];
 
   const totalDuration = workouts.reduce(
-    (total, workout) =>
-      total + Number(workout.duration || 0),
+    (total, workout) => total + Number(workout.duration || 0),
     0
   );
 
   const totalSets = workouts.reduce(
-    (total, workout) =>
-      total + Number(workout.sets || 0),
+    (total, workout) => total + Number(workout.sets || 0),
     0
   );
 
   const totalReps = workouts.reduce(
-    (total, workout) =>
-      total + Number(workout.reps || 0),
+    (total, workout) => total + Number(workout.reps || 0),
     0
   );
 
@@ -82,17 +86,12 @@ function Progress() {
             <div
               className="progress-bar-fill"
               style={{
-                width: `${Math.min(
-                  workouts.length * 10,
-                  100
-                )}%`,
+                width: `${Math.min(workouts.length * 10, 100)}%`,
               }}
             />
           </div>
 
-          <p>
-            {workouts.length} workout sessions recorded.
-          </p>
+          <p>{workouts.length} workout sessions recorded.</p>
         </article>
 
         <article className="dashboard-card">

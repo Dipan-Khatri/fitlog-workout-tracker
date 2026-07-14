@@ -1,12 +1,30 @@
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import WorkoutForm from "../components/WorkoutForm";
 
 function AddWorkout() {
   const navigate = useNavigate();
 
-  const saveWorkout = (newWorkout) => {
+  function getUserWorkoutKey() {
+    const currentUserId = localStorage.getItem("fitlogCurrentUserId");
+
+    if (!currentUserId) {
+      return null;
+    }
+
+    return `fitlogWorkouts_${currentUserId}`;
+  }
+
+  function saveWorkout(newWorkout) {
+    const workoutKey = getUserWorkoutKey();
+
+    if (!workoutKey) {
+      alert("User session not found. Please sign in again.");
+      navigate("/login");
+      return;
+    }
+
     const savedWorkouts =
-      JSON.parse(localStorage.getItem("fitlogWorkouts")) || [];
+      JSON.parse(localStorage.getItem(workoutKey)) || [];
 
     const workoutToSave = {
       ...newWorkout,
@@ -14,41 +32,31 @@ function AddWorkout() {
       createdAt: new Date().toISOString(),
     };
 
-    const updatedWorkouts = [...savedWorkouts, workoutToSave];
-
     localStorage.setItem(
-      "fitlogWorkouts",
-      JSON.stringify(updatedWorkouts)
+      workoutKey,
+      JSON.stringify([...savedWorkouts, workoutToSave])
     );
 
     alert("Workout saved successfully!");
     navigate("/history");
-  };
+  }
 
   return (
-    <main className="page-shell">
-      <div className="page-header">
-        <button
-          className="back-button"
-          type="button"
-          onClick={() => navigate("/history")}
-        >
-          ←
-        </button>
-
+    <section className="content-page">
+      <header className="page-header">
         <div>
           <h1>Add Workout</h1>
           <p>Log a new workout and keep your progress going.</p>
         </div>
-      </div>
+      </header>
 
       <WorkoutForm
         onSubmit={saveWorkout}
         submitText="Save Workout"
-        onCancel={() => navigate("/history")}
+        onCancel={() => navigate("/dashboard")}
       />
-    </main>
+    </section>
   );
 }
 
-export default AddWorkout; 
+export default AddWorkout;

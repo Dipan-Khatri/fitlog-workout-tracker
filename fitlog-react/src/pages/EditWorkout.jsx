@@ -9,15 +9,26 @@ function EditWorkout() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const savedWorkouts =
-    JSON.parse(localStorage.getItem("fitlogWorkouts")) ||
-    [];
+  const currentUserId = localStorage.getItem("fitlogCurrentUserId");
+
+  const workoutKey = currentUserId
+    ? `fitlogWorkouts_${currentUserId}`
+    : null;
+
+  const savedWorkouts = workoutKey
+    ? JSON.parse(localStorage.getItem(workoutKey)) || []
+    : [];
 
   const selectedWorkout = savedWorkouts.find(
     (workout) => workout.id === id
   );
 
   function updateWorkout(updatedWorkout) {
+    if (!workoutKey) {
+      navigate("/login");
+      return;
+    }
+
     const updatedWorkouts = savedWorkouts.map((workout) =>
       workout.id === id
         ? {
@@ -29,7 +40,7 @@ function EditWorkout() {
     );
 
     localStorage.setItem(
-      "fitlogWorkouts",
+      workoutKey,
       JSON.stringify(updatedWorkouts)
     );
 
@@ -42,7 +53,7 @@ function EditWorkout() {
       "Are you sure you want to delete this workout?"
     );
 
-    if (!confirmed) {
+    if (!confirmed || !workoutKey) {
       return;
     }
 
@@ -51,7 +62,7 @@ function EditWorkout() {
     );
 
     localStorage.setItem(
-      "fitlogWorkouts",
+      workoutKey,
       JSON.stringify(remainingWorkouts)
     );
 
@@ -84,8 +95,7 @@ function EditWorkout() {
           <h1>Edit / Delete Workout</h1>
 
           <p>
-            Update your workout details or remove the
-            workout.
+            Update your workout details or remove the workout.
           </p>
         </div>
       </header>
