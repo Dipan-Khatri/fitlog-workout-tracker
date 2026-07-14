@@ -1036,3 +1036,266 @@ textarea {
     padding: 22px 18px;
   }
 }
+/* =========================
+   PERSONALIZED DASHBOARD
+========================= */
+
+.dashboard-page {
+  width: 100%;
+}
+
+.personalized-header {
+  align-items: flex-start;
+}
+
+.dashboard-header-text {
+  max-width: 760px;
+}
+
+.dashboard-date {
+  margin: 0 0 10px;
+  color: #246cf1;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.dashboard-header-text h1 {
+  margin: 0;
+  color: #0b2e63;
+  font-size: clamp(34px, 4vw, 48px);
+  font-weight: 800;
+  line-height: 1.12;
+}
+
+.dashboard-motivation {
+  max-width: 650px;
+  margin: 12px 0 0;
+  color: #74839a;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.dashboard-add-button {
+  display: inline-flex;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 23px;
+  white-space: nowrap;
+  box-shadow: 0 10px 22px rgba(36, 108, 241, 0.22);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dashboard-add-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(36, 108, 241, 0.28);
+}
+
+.dashboard-feature-grid {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.45fr)
+    minmax(300px, 0.75fr);
+  gap: 22px;
+  margin-top: 24px;
+}
+
+.card-subtitle {
+  margin: 5px 0 0;
+  color: #7b899d;
+  font-size: 14px;
+}
+
+.card-title-row h2 {
+  margin: 0;
+}
+
+.card-title-row > a {
+  color: #1c63e8;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.card-title-row > a:hover {
+  text-decoration: underline;
+}
+
+.recent-workouts-card {
+  min-height: 365px;
+}
+
+.weekly-goal-card {
+  min-height: 365px;
+}
+
+.empty-state-icon {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 15px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e9f2ff;
+  font-size: 27px;
+}
+
+.dashboard-empty h3 {
+  margin: 0;
+  color: #163458;
+}
+
+.dashboard-empty p {
+  max-width: 360px;
+  margin: 10px auto 18px;
+  color: #758399;
+  line-height: 1.5;
+}
+
+.empty-state-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  border-radius: 9px;
+  color: #ffffff !important;
+  background: #246cf1;
+  font-weight: 700;
+  text-decoration: none !important;
+}
+
+.goal-icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border-radius: 13px;
+  background: #fff2db;
+  font-size: 22px;
+}
+
+.goal-progress-information {
+  display: flex;
+  margin-top: 52px;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.goal-progress-information strong {
+  color: #102542;
+  font-size: 34px;
+}
+
+.goal-progress-information span {
+  color: #7b899d;
+}
+
+.weekly-goal-progress {
+  width: 100%;
+  height: 16px;
+  margin: 24px 0 16px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #e6edf7;
+}
+
+.weekly-goal-progress-fill {
+  height: 100%;
+  min-width: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      90deg,
+      #1558df,
+      #4e93ff
+    );
+  transition: width 0.4s ease;
+}
+
+.goal-message {
+  margin: 0;
+  color: #6f7f96;
+  line-height: 1.5;
+}
+
+.goal-action-link {
+  display: inline-block;
+  margin-top: 20px;
+  color: #1d65eb;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.goal-action-link:hover {
+  text-decoration: underline;
+}
+
+.progress-overview-card {
+  min-height: auto;
+  margin-top: 22px;
+}
+
+.dashboard-progress-bar {
+  margin: 35px 0 28px;
+}
+
+.dashboard-summary-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.dashboard-summary-item {
+  display: flex;
+  min-height: 100px;
+  justify-content: center;
+  padding: 20px;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid #e2eaf4;
+  border-radius: 14px;
+  background: #f6f9fe;
+}
+
+.dashboard-summary-item span {
+  color: #77869c;
+  font-size: 14px;
+}
+
+.dashboard-summary-item strong {
+  color: #102542;
+  font-size: 25px;
+}
+
+@media (max-width: 1150px) {
+  .dashboard-feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .personalized-header {
+    flex-direction: column;
+  }
+
+  .dashboard-add-button {
+    width: 100%;
+  }
+
+  .dashboard-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-header-text h1 {
+    font-size: 34px;
+  }
+}
