@@ -2870,3 +2870,243 @@ button.weekly-calendar-day:focus-visible {
     flex-direction: column;
   }
 }
+
+/* ==========================================
+   QUICK WORKOUT TEMPLATE DESIGN
+========================================== */
+
+.workout-template-section {
+  margin: 28px 0;
+  padding: 26px;
+  border: 1px solid #dce7f5;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 14px 35px rgba(32, 76, 140, 0.09);
+}
+
+.workout-template-section .section-heading {
+  margin-bottom: 22px;
+}
+
+.workout-template-section .section-heading h2 {
+  margin: 0;
+  color: #0d294d;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.workout-template-section .section-heading p {
+  margin: 7px 0 0;
+  color: #71809a;
+  font-size: 14px;
+}
+
+.workout-template-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.workout-template-card {
+  display: flex;
+  min-height: 125px;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 14px;
+  flex-direction: column;
+  gap: 7px;
+  border: 1px solid #dce6f3;
+  border-radius: 15px;
+  color: #173457;
+  background: linear-gradient(
+    145deg,
+    #fbfdff,
+    #f2f7ff
+  );
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.workout-template-card:hover {
+  transform: translateY(-3px);
+  border-color: #8fb5f5;
+  background: #edf4ff;
+  box-shadow: 0 12px 24px rgba(36, 108, 241, 0.13);
+}
+
+.workout-template-card.selected {
+  border: 2px solid #246cf1;
+  background: linear-gradient(
+    145deg,
+    #e7f0ff,
+    #f3f7ff
+  );
+  box-shadow:
+    0 0 0 4px rgba(36, 108, 241, 0.1),
+    0 12px 24px rgba(36, 108, 241, 0.14);
+}
+
+.workout-template-card span {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 12px;
+  background: #e4edff;
+  font-size: 23px;
+}
+
+.workout-template-card.selected span {
+  background: #d7e6ff;
+}
+
+.workout-template-card strong {
+  color: #112d50;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.workout-template-card small {
+  color: #758399;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ==========================================
+   FORM VALIDATION DESIGN
+========================================== */
+
+.form-error-summary {
+  margin-bottom: 20px;
+  padding: 13px 15px;
+  border: 1px solid #f1b7c0;
+  border-radius: 10px;
+  color: #b42334;
+  background: #fff0f2;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.form-group .input-error {
+  border-color: #e13d50;
+  background: #fff8f9;
+}
+
+.form-group .input-error:focus {
+  border-color: #e13d50;
+  box-shadow: 0 0 0 4px rgba(225, 61, 80, 0.12);
+}
+
+.field-error {
+  margin-top: 5px;
+  color: #c52c40;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.field-help-text {
+  margin-top: 5px;
+  color: #8592a5;
+  font-size: 11px;
+  text-align: right;
+}
+
+/* ==========================================
+   SUCCESS MESSAGE
+========================================== */
+
+.workout-success-toast {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 22px;
+  padding: 14px 17px;
+  border: 1px solid #b9e5c7;
+  border-radius: 12px;
+  color: #14743c;
+  background: #eaf9ef;
+  font-weight: 800;
+  box-shadow: 0 10px 23px rgba(28, 130, 71, 0.1);
+}
+
+.workout-success-toast span {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  border-radius: 50%;
+  color: #ffffff;
+  background: #22a75a;
+}
+
+/* ==========================================
+   FORM AND SUMMARY POLISH
+========================================== */
+
+.workout-form-card,
+.summary-card {
+  border: 1px solid #dce7f5;
+  border-radius: 18px;
+  box-shadow: 0 14px 32px rgba(30, 71, 130, 0.08);
+}
+
+.workout-form-card input,
+.workout-form-card textarea {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.workout-form-card input:focus,
+.workout-form-card textarea:focus {
+  border-color: #246cf1;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(36, 108, 241, 0.11);
+}
+
+.summary-details {
+  padding: 16px;
+  border-radius: 12px;
+  background: #f6f9fd;
+}
+
+.summary-details p {
+  margin: 8px 0;
+}
+
+.ready-message {
+  border: 1px solid #c0e8cc;
+  border-radius: 11px;
+  background: #e9f8ee;
+  color: #168143;
+}
+
+/* ==========================================
+   RESPONSIVE TEMPLATE DESIGN
+========================================== */
+
+@media (max-width: 1050px) {
+  .workout-template-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .workout-template-section {
+    padding: 20px;
+  }
+
+  .workout-template-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workout-template-card {
+    min-height: 105px;
+  }
+}

@@ -1,11 +1,16 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import WorkoutForm from "../components/WorkoutForm";
 
 function AddWorkout() {
   const navigate = useNavigate();
 
+  const [successMessage, setSuccessMessage] =
+    useState("");
+
   function getUserWorkoutKey() {
-    const currentUserId = localStorage.getItem("fitlogCurrentUserId");
+    const currentUserId =
+      localStorage.getItem("fitlogCurrentUserId");
 
     if (!currentUserId) {
       return null;
@@ -18,13 +23,23 @@ function AddWorkout() {
     const workoutKey = getUserWorkoutKey();
 
     if (!workoutKey) {
-      alert("User session not found. Please sign in again.");
       navigate("/login");
       return;
     }
 
-    const savedWorkouts =
-      JSON.parse(localStorage.getItem(workoutKey)) || [];
+    let savedWorkouts = [];
+
+    try {
+      savedWorkouts =
+        JSON.parse(
+          localStorage.getItem(workoutKey)
+        ) || [];
+    } catch (error) {
+      console.error(
+        "Unable to load saved workouts:",
+        error
+      );
+    }
 
     const workoutToSave = {
       ...newWorkout,
@@ -34,26 +49,55 @@ function AddWorkout() {
 
     localStorage.setItem(
       workoutKey,
-      JSON.stringify([...savedWorkouts, workoutToSave])
+      JSON.stringify([
+        ...savedWorkouts,
+        workoutToSave,
+      ])
     );
 
-    alert("Workout saved successfully!");
-    navigate("/history");
+    setSuccessMessage(
+      "Workout saved successfully! Opening your history..."
+    );
+
+    window.setTimeout(() => {
+      navigate("/history");
+    }, 900);
   }
 
   return (
     <section className="content-page">
       <header className="page-header">
         <div>
+          <p className="page-eyebrow">
+            Workout Builder
+          </p>
+
           <h1>Add Workout</h1>
-          <p>Log a new workout and keep your progress going.</p>
+
+          <p>
+            Use a quick template or create a
+            custom workout.
+          </p>
         </div>
       </header>
+
+      {successMessage && (
+        <div
+          className="workout-success-toast"
+          role="status"
+        >
+          <span>✓</span>
+          {successMessage}
+        </div>
+      )}
 
       <WorkoutForm
         onSubmit={saveWorkout}
         submitText="Save Workout"
-        onCancel={() => navigate("/dashboard")}
+        onCancel={() =>
+          navigate("/dashboard")
+        }
+        showTemplates
       />
     </section>
   );
