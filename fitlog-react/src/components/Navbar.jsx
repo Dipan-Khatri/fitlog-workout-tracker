@@ -1,7 +1,16 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import {
+  NavLink,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [mobileMenuOpen, setMobileMenuOpen] =
+    useState(false);
 
   const currentUserId =
     localStorage.getItem("fitlogCurrentUserId");
@@ -17,18 +26,18 @@ function Navbar() {
 
   try {
     workouts = workoutKey
-      ? JSON.parse(localStorage.getItem(workoutKey)) || []
+      ? JSON.parse(
+          localStorage.getItem(workoutKey)
+        ) || []
       : [];
   } catch (error) {
-    console.error("Unable to load workouts:", error);
+    console.error(
+      "Unable to load workouts:",
+      error
+    );
+
     workouts = [];
   }
-
-  /*
-    XP system:
-    Each saved workout gives the user 100 XP.
-    Every 500 XP increases the user's level.
-  */
 
   const xpPerWorkout = 100;
   const xpRequiredPerLevel = 500;
@@ -37,172 +46,321 @@ function Navbar() {
     workouts.length * xpPerWorkout;
 
   const userLevel =
-    Math.floor(totalXp / xpRequiredPerLevel) + 1;
+    Math.floor(
+      totalXp / xpRequiredPerLevel
+    ) + 1;
 
   const currentLevelXp =
     totalXp % xpRequiredPerLevel;
 
   const levelProgress =
-    (currentLevelXp / xpRequiredPerLevel) * 100;
+    (
+      currentLevelXp /
+      xpRequiredPerLevel
+    ) * 100;
 
   const xpUntilNextLevel =
-    xpRequiredPerLevel - currentLevelXp;
+    xpRequiredPerLevel -
+    currentLevelXp;
 
-  function getLinkClass({ isActive }) {
+  function getLinkClass({
+    isActive,
+  }) {
     return isActive
       ? "nav-link active"
       : "nav-link";
   }
 
+  function closeMobileMenu() {
+    setMobileMenuOpen(false);
+  }
+
   function handleLogoClick() {
-    window.location.href = "/dashboard";
+    closeMobileMenu();
+
+    window.location.href =
+      "/dashboard";
   }
 
   function handleLogout() {
-    localStorage.removeItem("fitlogLoggedIn");
-    localStorage.removeItem("fitlogCurrentUserId");
-    localStorage.removeItem("fitlogUserEmail");
-    localStorage.removeItem("fitlogUserName");
+    localStorage.removeItem(
+      "fitlogLoggedIn"
+    );
 
+    localStorage.removeItem(
+      "fitlogCurrentUserId"
+    );
+
+    localStorage.removeItem(
+      "fitlogUserEmail"
+    );
+
+    localStorage.removeItem(
+      "fitlogUserName"
+    );
+
+    closeMobileMenu();
     navigate("/login");
   }
 
+  function getPageTitle() {
+    switch (location.pathname) {
+      case "/dashboard":
+        return "Dashboard";
+
+      case "/add-workout":
+        return "Add Workout";
+
+      case "/history":
+        return "History";
+
+      case "/progress":
+        return "Progress";
+
+      case "/profile":
+        return "Profile";
+
+      default:
+        return "FitLog";
+    }
+  }
+
   return (
-    <aside className="fitlog-sidebar">
-      <div className="sidebar-logo-section">
+    <>
+      <header className="mobile-topbar">
         <button
           type="button"
-          className="sidebar-logo-button"
+          className="mobile-menu-button"
+          onClick={() =>
+            setMobileMenuOpen(true)
+          }
+          aria-label="Open navigation menu"
+          aria-expanded={mobileMenuOpen}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+
+        <button
+          type="button"
+          className="mobile-logo-button"
           onClick={handleLogoClick}
-          aria-label="Return to Dashboard"
-          title="Return to Dashboard"
+          aria-label="Open Dashboard"
         >
           <img
             src="/fitlog-logo.png"
             alt="FitLog logo"
-            className="sidebar-logo"
           />
         </button>
-      </div>
 
-      <nav className="sidebar-navigation">
-        <NavLink
-          to="/dashboard"
-          className={getLinkClass}
-        >
-          <span aria-hidden="true">⌂</span>
-          Dashboard
-        </NavLink>
+        <strong>
+          {getPageTitle()}
+        </strong>
+      </header>
 
-        <NavLink
-          to="/add-workout"
-          className={getLinkClass}
-        >
-          <span aria-hidden="true">＋</span>
-          Add Workout
-        </NavLink>
+      {mobileMenuOpen && (
+        <button
+          type="button"
+          className="mobile-sidebar-overlay"
+          onClick={closeMobileMenu}
+          aria-label="Close navigation menu"
+        />
+      )}
 
-        <NavLink
-          to="/history"
-          className={getLinkClass}
-        >
-          <span aria-hidden="true">◷</span>
-          History
-        </NavLink>
+      <aside
+        className={
+          mobileMenuOpen
+            ? "fitlog-sidebar mobile-open"
+            : "fitlog-sidebar"
+        }
+      >
+        <div className="sidebar-mobile-header">
+          <span>Navigation</span>
 
-        <NavLink
-          to="/progress"
-          className={getLinkClass}
-        >
-          <span aria-hidden="true">▥</span>
-          Progress
-        </NavLink>
+          <button
+            type="button"
+            onClick={closeMobileMenu}
+            aria-label="Close navigation menu"
+          >
+            ×
+          </button>
+        </div>
 
-        <NavLink
-          to="/profile"
-          className={getLinkClass}
-        >
-          <span aria-hidden="true">◎</span>
-          Profile
-        </NavLink>
-      </nav>
+        <div className="sidebar-logo-section">
+          <button
+            type="button"
+            className="sidebar-logo-button"
+            onClick={handleLogoClick}
+            aria-label="Return to Dashboard"
+            title="Return to Dashboard"
+          >
+            <img
+              src="/fitlog-logo.png"
+              alt="FitLog logo"
+              className="sidebar-logo"
+            />
+          </button>
+        </div>
 
-      <section className="sidebar-level-card">
-        <div className="sidebar-level-header">
-          <div className="sidebar-level-icon">
-            🏆
+        <nav className="sidebar-navigation">
+          <NavLink
+            to="/dashboard"
+            className={getLinkClass}
+            onClick={closeMobileMenu}
+          >
+            <span aria-hidden="true">
+              ⌂
+            </span>
+
+            Dashboard
+          </NavLink>
+
+          <NavLink
+            to="/add-workout"
+            className={getLinkClass}
+            onClick={closeMobileMenu}
+          >
+            <span aria-hidden="true">
+              ＋
+            </span>
+
+            Add Workout
+          </NavLink>
+
+          <NavLink
+            to="/history"
+            className={getLinkClass}
+            onClick={closeMobileMenu}
+          >
+            <span aria-hidden="true">
+              ◷
+            </span>
+
+            History
+          </NavLink>
+
+          <NavLink
+            to="/progress"
+            className={getLinkClass}
+            onClick={closeMobileMenu}
+          >
+            <span aria-hidden="true">
+              ▥
+            </span>
+
+            Progress
+          </NavLink>
+
+          <NavLink
+            to="/profile"
+            className={getLinkClass}
+            onClick={closeMobileMenu}
+          >
+            <span aria-hidden="true">
+              ◎
+            </span>
+
+            Profile
+          </NavLink>
+        </nav>
+
+        <section className="sidebar-level-card">
+          <div className="sidebar-level-header">
+            <div className="sidebar-level-icon">
+              🏆
+            </div>
+
+            <div>
+              <span>
+                FitLog Level
+              </span>
+
+              <strong>
+                Level {userLevel}
+              </strong>
+            </div>
           </div>
 
-          <div>
-            <span>FitLog Level</span>
+          <div className="sidebar-xp-information">
+            <span>
+              {currentLevelXp} /{" "}
+              {xpRequiredPerLevel} XP
+            </span>
 
             <strong>
-              Level {userLevel}
+              {Math.round(
+                levelProgress
+              )}
+              %
             </strong>
           </div>
-        </div>
 
-        <div className="sidebar-xp-information">
-          <span>
-            {currentLevelXp} / {xpRequiredPerLevel} XP
+          <div className="sidebar-xp-progress">
+            <div
+              className="sidebar-xp-progress-fill"
+              style={{
+                width: `${levelProgress}%`,
+              }}
+            />
+          </div>
+
+          <p>
+            {workouts.length === 0
+              ? "Complete a workout to earn XP."
+              : `${xpUntilNextLevel} XP until Level ${
+                  userLevel + 1
+                }.`}
+          </p>
+        </section>
+
+        <button
+          className="sidebar-logout"
+          type="button"
+          onClick={handleLogout}
+        >
+          <span aria-hidden="true">
+            ↪
           </span>
 
-          <strong>
-            {Math.round(levelProgress)}%
-          </strong>
+          Logout
+        </button>
+
+        <div className="sidebar-bottom-section">
+          <NavLink
+            to="/profile"
+            className="sidebar-user sidebar-user-link"
+            onClick={closeMobileMenu}
+          >
+            <div className="user-avatar">
+              {userName
+                .charAt(0)
+                .toUpperCase()}
+            </div>
+
+            <div>
+              <strong>
+                {userName}
+              </strong>
+
+              <small>
+                FitLog Member
+              </small>
+            </div>
+          </NavLink>
+
+          <footer className="sidebar-footer">
+            <strong>
+              FitLog v1.0
+            </strong>
+
+            <span>
+              Track • Train • Improve
+            </span>
+          </footer>
         </div>
-
-        <div className="sidebar-xp-progress">
-          <div
-            className="sidebar-xp-progress-fill"
-            style={{
-              width: `${levelProgress}%`,
-            }}
-          />
-        </div>
-
-        <p>
-          {workouts.length === 0
-            ? "Complete your first workout to earn XP."
-            : `${xpUntilNextLevel} XP until Level ${
-                userLevel + 1
-              }.`}
-        </p>
-      </section>
-
-      <button
-        className="sidebar-logout"
-        type="button"
-        onClick={handleLogout}
-      >
-        <span aria-hidden="true">↪</span>
-        Logout
-      </button>
-
-      <div className="sidebar-bottom-section">
-        <NavLink
-          to="/profile"
-          className="sidebar-user sidebar-user-link"
-        >
-          <div className="user-avatar">
-            {userName.charAt(0).toUpperCase()}
-          </div>
-
-          <div>
-            <strong>{userName}</strong>
-            <small>FitLog Member</small>
-          </div>
-        </NavLink>
-
-        <footer className="sidebar-footer">
-          <strong>FitLog v1.0</strong>
-
-          <span>Track • Train • Improve</span>
-
-          <small>Built with React + Vite</small>
-        </footer>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }
 
