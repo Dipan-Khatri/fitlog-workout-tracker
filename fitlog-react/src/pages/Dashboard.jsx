@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 const motivationalQuotes = [
@@ -42,9 +42,14 @@ const motivationalQuotes = [
 function getStartOfWeek(date) {
   const currentDate = new Date(date);
   const day = currentDate.getDay();
-  const difference = day === 0 ? -6 : 1 - day;
 
-  currentDate.setDate(currentDate.getDate() + difference);
+  const difference =
+    day === 0 ? -6 : 1 - day;
+
+  currentDate.setDate(
+    currentDate.getDate() + difference
+  );
+
   currentDate.setHours(0, 0, 0, 0);
 
   return currentDate;
@@ -52,18 +57,85 @@ function getStartOfWeek(date) {
 
 function formatDateKey(date) {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+
+  const month = String(
+    date.getMonth() + 1
+  ).padStart(2, "0");
+
+  const day = String(
+    date.getDate()
+  ).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
 }
 
+function estimateCalories(workout, bodyWeight) {
+  const duration =
+    Number(workout.duration || 0);
+
+  const weight =
+    Number(bodyWeight || 165);
+
+  const workoutName = String(
+    workout.workoutName || ""
+  ).toLowerCase();
+
+  const exerciseName = String(
+    workout.exerciseName || ""
+  ).toLowerCase();
+
+  const combinedText =
+    `${workoutName} ${exerciseName}`;
+
+  let caloriesPerMinute = 6;
+
+  if (
+    combinedText.includes("run") ||
+    combinedText.includes("cardio") ||
+    combinedText.includes("cycling")
+  ) {
+    caloriesPerMinute = 9;
+  } else if (
+    combinedText.includes("leg") ||
+    combinedText.includes("squat") ||
+    combinedText.includes("deadlift")
+  ) {
+    caloriesPerMinute = 8;
+  } else if (
+    combinedText.includes("full body") ||
+    combinedText.includes("circuit")
+  ) {
+    caloriesPerMinute = 8.5;
+  } else if (
+    combinedText.includes("chest") ||
+    combinedText.includes("back") ||
+    combinedText.includes("push") ||
+    combinedText.includes("pull") ||
+    combinedText.includes("shoulder")
+  ) {
+    caloriesPerMinute = 7;
+  }
+
+  const weightAdjustment =
+    weight / 165;
+
+  return Math.round(
+    duration *
+      caloriesPerMinute *
+      weightAdjustment
+  );
+}
+
 function Dashboard() {
   const currentUserId =
-    localStorage.getItem("fitlogCurrentUserId");
+    localStorage.getItem(
+      "fitlogCurrentUserId"
+    );
 
   const userName =
-    localStorage.getItem("fitlogUserName") || "User";
+    localStorage.getItem(
+      "fitlogUserName"
+    ) || "User";
 
   const workoutKey = currentUserId
     ? `fitlogWorkouts_${currentUserId}`
@@ -73,26 +145,65 @@ function Dashboard() {
     ? `fitlogCalendarNotes_${currentUserId}`
     : null;
 
+  const goalKey = currentUserId
+    ? `fitlogWeeklyGoal_${currentUserId}`
+    : null;
+
   let workouts = [];
   let savedNotes = {};
+  let savedUsers = [];
 
   try {
     workouts = workoutKey
-      ? JSON.parse(localStorage.getItem(workoutKey)) || []
+      ? JSON.parse(
+          localStorage.getItem(workoutKey)
+        ) || []
       : [];
   } catch (error) {
-    console.error("Unable to load workouts:", error);
+    console.error(
+      "Unable to load workouts:",
+      error
+    );
+
     workouts = [];
   }
 
   try {
     savedNotes = notesKey
-      ? JSON.parse(localStorage.getItem(notesKey)) || {}
+      ? JSON.parse(
+          localStorage.getItem(notesKey)
+        ) || {}
       : {};
   } catch (error) {
-    console.error("Unable to load calendar notes:", error);
+    console.error(
+      "Unable to load calendar notes:",
+      error
+    );
+
     savedNotes = {};
   }
+
+  try {
+    savedUsers =
+      JSON.parse(
+        localStorage.getItem("fitlogUsers")
+      ) || [];
+  } catch (error) {
+    console.error(
+      "Unable to load users:",
+      error
+    );
+
+    savedUsers = [];
+  }
+
+  const currentUser = savedUsers.find(
+    (user) =>
+      user.id === currentUserId
+  );
+
+  const bodyWeight =
+    Number(currentUser?.weight) || 165;
 
   const [calendarNotes, setCalendarNotes] =
     useState(savedNotes);
@@ -106,8 +217,27 @@ function Dashboard() {
   const [noteMessage, setNoteMessage] =
     useState("");
 
+  const [weeklyGoal, setWeeklyGoal] =
+    useState(() => {
+      const savedGoal = Number(
+        goalKey
+          ? localStorage.getItem(goalKey)
+          : 5
+      );
+
+      return savedGoal >= 2 &&
+        savedGoal <= 7
+        ? savedGoal
+        : 5;
+    });
+
+  const [goalMessage, setGoalMessage] =
+    useState("");
+
   const now = new Date();
-  const currentHour = now.getHours();
+
+  const currentHour =
+    now.getHours();
 
   let greeting = "Hello";
   let greetingEmoji = "👋";
@@ -123,18 +253,20 @@ function Dashboard() {
     greetingEmoji = "🌙";
   }
 
-  const today = now.toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const today =
+    now.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
 
-  const startOfYear = new Date(
-    now.getFullYear(),
-    0,
-    0
-  );
+  const startOfYear =
+    new Date(
+      now.getFullYear(),
+      0,
+      0
+    );
 
   const dayOfYear = Math.floor(
     (now - startOfYear) /
@@ -143,133 +275,216 @@ function Dashboard() {
 
   const dailyQuote =
     motivationalQuotes[
-      dayOfYear % motivationalQuotes.length
+      dayOfYear %
+        motivationalQuotes.length
     ];
 
-  const totalDuration = workouts.reduce(
-    (total, workout) =>
-      total + Number(workout.duration || 0),
-    0
-  );
+  const totalDuration =
+    workouts.reduce(
+      (total, workout) =>
+        total +
+        Number(
+          workout.duration || 0
+        ),
+      0
+    );
 
-  const totalVolume = workouts.reduce(
-    (total, workout) =>
-      total +
-      Number(workout.sets || 0) *
-        Number(workout.reps || 0) *
-        Number(workout.weight || 0),
-    0
-  );
+  const totalVolume =
+    workouts.reduce(
+      (total, workout) =>
+        total +
+        Number(
+          workout.sets || 0
+        ) *
+          Number(
+            workout.reps || 0
+          ) *
+          Number(
+            workout.weight || 0
+          ),
+      0
+    );
 
-  const recentWorkouts = [...workouts]
-    .sort((firstWorkout, secondWorkout) => {
-      const firstDate = new Date(
-        firstWorkout.createdAt ||
-          firstWorkout.date
-      );
+  const totalCalories =
+    workouts.reduce(
+      (total, workout) =>
+        total +
+        estimateCalories(
+          workout,
+          bodyWeight
+        ),
+      0
+    );
 
-      const secondDate = new Date(
-        secondWorkout.createdAt ||
-          secondWorkout.date
-      );
+  const recentWorkouts =
+    [...workouts]
+      .sort(
+        (
+          firstWorkout,
+          secondWorkout
+        ) => {
+          const firstDate =
+            new Date(
+              firstWorkout.createdAt ||
+                firstWorkout.date
+            );
 
-      return secondDate - firstDate;
-    })
-    .slice(0, 5);
+          const secondDate =
+            new Date(
+              secondWorkout.createdAt ||
+                secondWorkout.date
+            );
+
+          return (
+            secondDate - firstDate
+          );
+        }
+      )
+      .slice(0, 5);
 
   const uniqueWorkoutDates = [
     ...new Set(
       workouts
-        .map((workout) => workout.date)
+        .map(
+          (workout) =>
+            workout.date
+        )
         .filter(Boolean)
     ),
   ];
 
-  const startOfWeek = getStartOfWeek(now);
+  const startOfWeek =
+    getStartOfWeek(now);
 
-  const weeklyDays = Array.from(
-    { length: 7 },
-    (_, index) => {
-      const date = new Date(startOfWeek);
+  const weeklyDays =
+    Array.from(
+      { length: 7 },
+      (_, index) => {
+        const date =
+          new Date(startOfWeek);
 
-      date.setDate(
-        startOfWeek.getDate() + index
-      );
+        date.setDate(
+          startOfWeek.getDate() +
+            index
+        );
 
-      const dateKey = formatDateKey(date);
+        const dateKey =
+          formatDateKey(date);
 
-      const workoutsForDay = workouts.filter(
-        (workout) =>
-          workout.date === dateKey
-      );
+        const workoutsForDay =
+          workouts.filter(
+            (workout) =>
+              workout.date ===
+              dateKey
+          );
 
-      return {
-        date,
-        dateKey,
+        const caloriesForDay =
+          workoutsForDay.reduce(
+            (total, workout) =>
+              total +
+              estimateCalories(
+                workout,
+                bodyWeight
+              ),
+            0
+          );
 
-        shortDay: date.toLocaleDateString(
-          "en-US",
-          {
-            weekday: "short",
-          }
-        ),
+        return {
+          dateKey,
 
-        fullDate: date.toLocaleDateString(
-          "en-US",
-          {
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-          }
-        ),
+          shortDay:
+            date.toLocaleDateString(
+              "en-US",
+              {
+                weekday: "short",
+              }
+            ),
 
-        dayNumber: date.getDate(),
+          fullDate:
+            date.toLocaleDateString(
+              "en-US",
+              {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              }
+            ),
 
-        isToday:
-          dateKey === formatDateKey(now),
+          dayNumber:
+            date.getDate(),
 
-        hasWorkout:
-          workoutsForDay.length > 0,
+          isToday:
+            dateKey ===
+            formatDateKey(now),
 
-        workoutCount:
-          workoutsForDay.length,
+          hasWorkout:
+            workoutsForDay.length > 0,
 
-        workouts: workoutsForDay,
+          workoutCount:
+            workoutsForDay.length,
 
-        hasNote: Boolean(
-          calendarNotes[dateKey]?.trim()
-        ),
-      };
-    }
-  );
+          workouts:
+            workoutsForDay,
+
+          calories:
+            caloriesForDay,
+
+          hasNote: Boolean(
+            calendarNotes[
+              dateKey
+            ]?.trim()
+          ),
+        };
+      }
+    );
 
   const weeklyWorkoutCount =
     weeklyDays.reduce(
       (total, day) =>
-        total + day.workoutCount,
+        total +
+        day.workoutCount,
+      0
+    );
+
+  const weeklyCalories =
+    weeklyDays.reduce(
+      (total, day) =>
+        total + day.calories,
       0
     );
 
   const weeklyActiveDays =
     weeklyDays.filter(
-      (day) => day.hasWorkout
+      (day) =>
+        day.hasWorkout
     ).length;
 
-  const weeklyGoal = 5;
-
-  const weeklyProgress = Math.min(
-    (weeklyActiveDays / weeklyGoal) * 100,
-    100
-  );
+  const weeklyProgress =
+    Math.min(
+      (
+        weeklyActiveDays /
+        weeklyGoal
+      ) * 100,
+      100
+    );
 
   const workoutDateSet =
-    new Set(uniqueWorkoutDates);
+    new Set(
+      uniqueWorkoutDates
+    );
 
   let currentStreak = 0;
 
-  const streakDate = new Date(now);
-  streakDate.setHours(0, 0, 0, 0);
+  const streakDate =
+    new Date(now);
+
+  streakDate.setHours(
+    0,
+    0,
+    0,
+    0
+  );
 
   if (
     !workoutDateSet.has(
@@ -277,7 +492,8 @@ function Dashboard() {
     )
   ) {
     streakDate.setDate(
-      streakDate.getDate() - 1
+      streakDate.getDate() -
+        1
     );
   }
 
@@ -289,15 +505,228 @@ function Dashboard() {
     currentStreak += 1;
 
     streakDate.setDate(
-      streakDate.getDate() - 1
+      streakDate.getDate() -
+        1
     );
+  }
+
+  const analytics = useMemo(() => {
+    if (workouts.length === 0) {
+      return {
+        favoriteExercise: "Not available",
+        favoriteExerciseCount: 0,
+        longestWorkout: 0,
+        averageDuration: 0,
+        averageVolume: 0,
+        highestVolumeWorkout:
+          "Not available",
+        highestVolumeAmount: 0,
+        highestWeightExercise:
+          "Not available",
+        highestWeight: 0,
+        mostActiveDay:
+          "Not available",
+      };
+    }
+
+    const exerciseCounts = {};
+    const dayCounts = {};
+
+    let longestWorkout = 0;
+    let highestVolumeAmount = 0;
+    let highestVolumeWorkout =
+      "Not available";
+
+    let highestWeight = 0;
+    let highestWeightExercise =
+      "Not available";
+
+    workouts.forEach((workout) => {
+      const exercise =
+        workout.exerciseName?.trim() ||
+        "Other";
+
+      exerciseCounts[exercise] =
+        (exerciseCounts[exercise] || 0) +
+        1;
+
+      const workoutDate =
+        workout.date
+          ? new Date(
+              `${workout.date}T12:00:00`
+            )
+          : null;
+
+      if (
+        workoutDate &&
+        !Number.isNaN(
+          workoutDate.getTime()
+        )
+      ) {
+        const dayName =
+          workoutDate.toLocaleDateString(
+            "en-US",
+            {
+              weekday: "long",
+            }
+          );
+
+        dayCounts[dayName] =
+          (dayCounts[dayName] || 0) +
+          1;
+      }
+
+      const duration =
+        Number(
+          workout.duration || 0
+        );
+
+      longestWorkout =
+        Math.max(
+          longestWorkout,
+          duration
+        );
+
+      const volume =
+        Number(
+          workout.sets || 0
+        ) *
+        Number(
+          workout.reps || 0
+        ) *
+        Number(
+          workout.weight || 0
+        );
+
+      if (
+        volume >
+        highestVolumeAmount
+      ) {
+        highestVolumeAmount =
+          volume;
+
+        highestVolumeWorkout =
+          workout.workoutName ||
+          workout.exerciseName ||
+          "Workout";
+      }
+
+      const weight =
+        Number(
+          workout.weight || 0
+        );
+
+      if (
+        weight >
+        highestWeight
+      ) {
+        highestWeight =
+          weight;
+
+        highestWeightExercise =
+          workout.exerciseName ||
+          "Exercise";
+      }
+    });
+
+    const favoriteExerciseEntry =
+      Object.entries(
+        exerciseCounts
+      ).sort(
+        (
+          firstExercise,
+          secondExercise
+        ) =>
+          secondExercise[1] -
+          firstExercise[1]
+      )[0];
+
+    const mostActiveDayEntry =
+      Object.entries(
+        dayCounts
+      ).sort(
+        (
+          firstDay,
+          secondDay
+        ) =>
+          secondDay[1] -
+          firstDay[1]
+      )[0];
+
+    return {
+      favoriteExercise:
+        favoriteExerciseEntry?.[0] ||
+        "Not available",
+
+      favoriteExerciseCount:
+        favoriteExerciseEntry?.[1] ||
+        0,
+
+      longestWorkout,
+
+      averageDuration:
+        Math.round(
+          totalDuration /
+            workouts.length
+        ),
+
+      averageVolume:
+        Math.round(
+          totalVolume /
+            workouts.length
+        ),
+
+      highestVolumeWorkout,
+
+      highestVolumeAmount,
+
+      highestWeightExercise,
+
+      highestWeight,
+
+      mostActiveDay:
+        mostActiveDayEntry?.[0] ||
+        "Not available",
+    };
+  }, [
+    workouts,
+    totalDuration,
+    totalVolume,
+  ]);
+
+  function saveWeeklyGoal(
+    event
+  ) {
+    const newGoal =
+      Number(
+        event.target.value
+      );
+
+    setWeeklyGoal(newGoal);
+
+    if (goalKey) {
+      localStorage.setItem(
+        goalKey,
+        String(newGoal)
+      );
+
+      setGoalMessage(
+        "Weekly goal updated."
+      );
+
+      window.setTimeout(() => {
+        setGoalMessage("");
+      }, 1800);
+    }
   }
 
   function openDayNote(day) {
     setSelectedDay(day);
 
     setNoteText(
-      calendarNotes[day.dateKey] || ""
+      calendarNotes[
+        day.dateKey
+      ] || ""
     );
 
     setNoteMessage("");
@@ -310,12 +739,16 @@ function Dashboard() {
   }
 
   function saveDayNote() {
-    if (!selectedDay || !notesKey) {
+    if (
+      !selectedDay ||
+      !notesKey
+    ) {
       return;
     }
 
     const updatedNotes = {
       ...calendarNotes,
+
       [selectedDay.dateKey]:
         noteText.trim(),
     };
@@ -328,10 +761,14 @@ function Dashboard() {
 
     localStorage.setItem(
       notesKey,
-      JSON.stringify(updatedNotes)
+      JSON.stringify(
+        updatedNotes
+      )
     );
 
-    setCalendarNotes(updatedNotes);
+    setCalendarNotes(
+      updatedNotes
+    );
 
     setNoteMessage(
       noteText.trim()
@@ -341,7 +778,10 @@ function Dashboard() {
   }
 
   function deleteDayNote() {
-    if (!selectedDay || !notesKey) {
+    if (
+      !selectedDay ||
+      !notesKey
+    ) {
       return;
     }
 
@@ -355,34 +795,51 @@ function Dashboard() {
 
     localStorage.setItem(
       notesKey,
-      JSON.stringify(updatedNotes)
+      JSON.stringify(
+        updatedNotes
+      )
     );
 
-    setCalendarNotes(updatedNotes);
+    setCalendarNotes(
+      updatedNotes
+    );
+
     setNoteText("");
-    setNoteMessage("Note deleted.");
+
+    setNoteMessage(
+      "Note deleted."
+    );
   }
 
-  function getNotePreview(note) {
+  function getNotePreview(
+    note
+  ) {
     if (!note) {
       return "";
     }
 
     return note.length > 42
-      ? `${note.slice(0, 42)}...`
+      ? `${note.slice(
+          0,
+          42
+        )}...`
       : note;
   }
 
   return (
     <section className="content-page dashboard-page">
+
       <header className="dashboard-header personalized-header">
         <div className="dashboard-header-text">
+
           <p className="dashboard-date">
             {today}
           </p>
 
           <h1>
-            {greeting}, {userName}!{" "}
+            {greeting},{" "}
+            {userName}!{" "}
+
             <span aria-hidden="true">
               {greetingEmoji}
             </span>
@@ -399,7 +856,10 @@ function Dashboard() {
           to="/add-workout"
           className="dashboard-add-button"
         >
-          <span aria-hidden="true">＋</span>
+          <span aria-hidden="true">
+            ＋
+          </span>
+
           Add Workout
         </Link>
       </header>
@@ -421,7 +881,9 @@ function Dashboard() {
             “{dailyQuote.text}”
           </blockquote>
 
-          <p>— {dailyQuote.author}</p>
+          <p>
+            — {dailyQuote.author}
+          </p>
         </div>
 
         <div
@@ -439,7 +901,10 @@ function Dashboard() {
           </div>
 
           <div>
-            <span>Total Workouts</span>
+            <span>
+              Total Workouts
+            </span>
+
             <strong>
               {workouts.length}
             </strong>
@@ -452,7 +917,10 @@ function Dashboard() {
           </div>
 
           <div>
-            <span>Total Duration</span>
+            <span>
+              Total Duration
+            </span>
+
             <strong>
               {totalDuration} min
             </strong>
@@ -461,15 +929,17 @@ function Dashboard() {
 
         <article className="stat-card">
           <div className="stat-icon orange">
-            ↗
+            🔥
           </div>
 
           <div>
-            <span>Total Volume</span>
+            <span>
+              Calories Burned
+            </span>
 
             <strong>
-              {totalVolume.toLocaleString()}{" "}
-              lbs
+              {totalCalories.toLocaleString()}{" "}
+              kcal
             </strong>
           </div>
         </article>
@@ -480,7 +950,9 @@ function Dashboard() {
           </div>
 
           <div>
-            <span>Current Streak</span>
+            <span>
+              Current Streak
+            </span>
 
             <strong>
               {currentStreak}{" "}
@@ -492,14 +964,150 @@ function Dashboard() {
         </article>
       </div>
 
-      <article className="dashboard-card weekly-calendar-card">
+      <section className="dashboard-insights-section">
+
+        <div className="section-heading">
+          <h2>
+            Fitness Insights
+          </h2>
+
+          <p>
+            Automatically calculated from
+            your workout history.
+          </p>
+        </div>
+
+        <div className="dashboard-insights-grid">
+
+          <article>
+            <span>⭐</span>
+
+            <div>
+              <small>
+                Favorite Exercise
+              </small>
+
+              <strong>
+                {
+                  analytics.favoriteExercise
+                }
+              </strong>
+
+              <em>
+                {
+                  analytics.favoriteExerciseCount
+                }{" "}
+                time
+                {
+                  analytics.favoriteExerciseCount ===
+                  1
+                    ? ""
+                    : "s"
+                }
+              </em>
+            </div>
+          </article>
+
+          <article>
+            <span>⏱️</span>
+
+            <div>
+              <small>
+                Longest Workout
+              </small>
+
+              <strong>
+                {
+                  analytics.longestWorkout
+                }{" "}
+                min
+              </strong>
+            </div>
+          </article>
+
+          <article>
+            <span>📊</span>
+
+            <div>
+              <small>
+                Average Duration
+              </small>
+
+              <strong>
+                {
+                  analytics.averageDuration
+                }{" "}
+                min
+              </strong>
+            </div>
+          </article>
+
+          <article>
+            <span>💪</span>
+
+            <div>
+              <small>
+                Average Volume
+              </small>
+
+              <strong>
+                {analytics.averageVolume.toLocaleString()}{" "}
+                lbs
+              </strong>
+            </div>
+          </article>
+
+          <article>
+            <span>🏆</span>
+
+            <div>
+              <small>
+                Highest Weight
+              </small>
+
+              <strong>
+                {
+                  analytics.highestWeight
+                }{" "}
+                lbs
+              </strong>
+
+              <em>
+                {
+                  analytics.highestWeightExercise
+                }
+              </em>
+            </div>
+          </article>
+
+          <article>
+            <span>📅</span>
+
+            <div>
+              <small>
+                Most Active Day
+              </small>
+
+              <strong>
+                {
+                  analytics.mostActiveDay
+                }
+              </strong>
+            </div>
+          </article>
+        </div>
+      </section>
+
+       <article className="dashboard-card weekly-calendar-card">
         <div className="card-title-row">
           <div>
-            <h2>Weekly Activity</h2>
+            <h2>
+              Weekly Activity
+            </h2>
 
             <p className="card-subtitle">
               Click any day to add a reminder
-              or note
+              or note.
             </p>
           </div>
 
@@ -527,12 +1135,15 @@ function Dashboard() {
               }
               className={[
                 "weekly-calendar-day",
+
                 day.isToday
                   ? "today"
                   : "",
+
                 day.hasWorkout
                   ? "completed"
                   : "",
+
                 day.hasNote
                   ? "has-note"
                   : "",
@@ -560,6 +1171,14 @@ function Dashboard() {
                   {day.workoutCount === 1
                     ? "workout"
                     : "workouts"}
+                </small>
+              )}
+
+              {day.hasWorkout && (
+                <small className="calendar-calorie-count">
+                  🔥{" "}
+                  {day.calories.toLocaleString()}{" "}
+                  kcal
                 </small>
               )}
 
@@ -612,7 +1231,9 @@ function Dashboard() {
             {weeklyWorkoutCount === 1
               ? "workout"
               : "workouts"}{" "}
-            recorded this week
+            and{" "}
+            {weeklyCalories.toLocaleString()}{" "}
+            kcal this week
           </p>
         </div>
       </article>
@@ -621,10 +1242,12 @@ function Dashboard() {
         <article className="dashboard-card recent-workouts-card">
           <div className="card-title-row">
             <div>
-              <h2>Recent Workouts</h2>
+              <h2>
+                Recent Workouts
+              </h2>
 
               <p className="card-subtitle">
-                Your latest workout activity
+                Your latest workout activity.
               </p>
             </div>
 
@@ -658,42 +1281,56 @@ function Dashboard() {
           ) : (
             <div className="recent-workout-list">
               {recentWorkouts.map(
-                (workout) => (
-                  <div
-                    className="recent-workout"
-                    key={workout.id}
-                  >
-                    <div className="recent-icon">
-                      🏋️
+                (workout) => {
+                  const workoutCalories =
+                    estimateCalories(
+                      workout,
+                      bodyWeight
+                    );
+
+                  return (
+                    <div
+                      className="recent-workout"
+                      key={workout.id}
+                    >
+                      <div className="recent-icon">
+                        🏋️
+                      </div>
+
+                      <div className="recent-info">
+                        <strong>
+                          {
+                            workout.workoutName
+                          }
+                        </strong>
+
+                        <span>
+                          {
+                            workout.exerciseName
+                          }
+                        </span>
+                      </div>
+
+                      <div className="recent-date">
+                        <span>
+                          {workout.date}
+                        </span>
+
+                        <small>
+                          {workout.duration ||
+                            0}{" "}
+                          min
+                        </small>
+
+                        <small className="recent-calories">
+                          🔥{" "}
+                          {workoutCalories}{" "}
+                          kcal
+                        </small>
+                      </div>
                     </div>
-
-                    <div className="recent-info">
-                      <strong>
-                        {
-                          workout.workoutName
-                        }
-                      </strong>
-
-                      <span>
-                        {
-                          workout.exerciseName
-                        }
-                      </span>
-                    </div>
-
-                    <div className="recent-date">
-                      <span>
-                        {workout.date}
-                      </span>
-
-                      <small>
-                        {workout.duration ||
-                          0}{" "}
-                        min
-                      </small>
-                    </div>
-                  </div>
-                )
+                  );
+                }
               )}
             </div>
           )}
@@ -702,11 +1339,13 @@ function Dashboard() {
         <article className="dashboard-card weekly-goal-card">
           <div className="card-title-row">
             <div>
-              <h2>Weekly Goal</h2>
+              <h2>
+                Weekly Goal
+              </h2>
 
               <p className="card-subtitle">
-                Complete {weeklyGoal} active
-                workout days
+                Choose a goal from 2 to 7
+                active days.
               </p>
             </div>
 
@@ -714,6 +1353,36 @@ function Dashboard() {
               🎯
             </div>
           </div>
+
+          <label
+            className="weekly-goal-selector"
+            htmlFor="weeklyGoal"
+          >
+            Weekly target
+
+            <select
+              id="weeklyGoal"
+              value={weeklyGoal}
+              onChange={saveWeeklyGoal}
+            >
+              {[2, 3, 4, 5, 6, 7].map(
+                (goal) => (
+                  <option
+                    key={goal}
+                    value={goal}
+                  >
+                    {goal} days
+                  </option>
+                )
+              )}
+            </select>
+          </label>
+
+          {goalMessage && (
+            <div className="goal-save-message">
+              {goalMessage}
+            </div>
+          )}
 
           <div className="goal-progress-information">
             <strong>
@@ -739,8 +1408,9 @@ function Dashboard() {
           </div>
 
           <p className="goal-message">
-            {weeklyActiveDays >= weeklyGoal
-              ? "Great job! You completed your weekly goal."
+            {weeklyActiveDays >=
+            weeklyGoal
+              ? "🎉 Great job! You completed your weekly goal."
               : `${
                   weeklyGoal -
                   Math.min(
@@ -759,6 +1429,18 @@ function Dashboard() {
                 } remaining this week.`}
           </p>
 
+          <div className="weekly-calorie-summary">
+            <span>
+              Calories this week
+            </span>
+
+            <strong>
+              🔥{" "}
+              {weeklyCalories.toLocaleString()}{" "}
+              kcal
+            </strong>
+          </div>
+
           <Link
             to="/add-workout"
             className="goal-action-link"
@@ -771,11 +1453,13 @@ function Dashboard() {
       <article className="dashboard-card progress-overview-card">
         <div className="card-title-row">
           <div>
-            <h2>Progress Overview</h2>
+            <h2>
+              Progress Overview
+            </h2>
 
             <p className="card-subtitle">
               A summary of your fitness
-              activity
+              activity.
             </p>
           </div>
 
@@ -795,14 +1479,19 @@ function Dashboard() {
 
         <div className="dashboard-summary-grid">
           <div className="dashboard-summary-item">
-            <span>Total Minutes</span>
+            <span>
+              Total Minutes
+            </span>
+
             <strong>
               {totalDuration}
             </strong>
           </div>
 
           <div className="dashboard-summary-item">
-            <span>Pounds Lifted</span>
+            <span>
+              Pounds Lifted
+            </span>
 
             <strong>
               {totalVolume.toLocaleString()}
@@ -810,15 +1499,19 @@ function Dashboard() {
           </div>
 
           <div className="dashboard-summary-item">
-            <span>Workout Days</span>
+            <span>
+              Calories Burned
+            </span>
 
             <strong>
-              {uniqueWorkoutDates.length}
+              {totalCalories.toLocaleString()}
             </strong>
           </div>
 
           <div className="dashboard-summary-item">
-            <span>Weekly Goal</span>
+            <span>
+              Weekly Goal
+            </span>
 
             <strong>
               {Math.round(
@@ -866,40 +1559,55 @@ function Dashboard() {
               </button>
             </div>
 
-            {selectedDay.workouts.length >
-              0 && (
+            {selectedDay.workouts.length > 0 && (
               <div className="calendar-day-workouts">
                 <h3>
                   Workouts scheduled
                 </h3>
 
                 {selectedDay.workouts.map(
-                  (workout) => (
-                    <div
-                      className="calendar-modal-workout"
-                      key={workout.id}
-                    >
-                      <div>
-                        <strong>
-                          {
-                            workout.workoutName
-                          }
-                        </strong>
+                  (workout) => {
+                    const workoutCalories =
+                      estimateCalories(
+                        workout,
+                        bodyWeight
+                      );
 
-                        <span>
-                          {
-                            workout.exerciseName
-                          }
-                        </span>
+                    return (
+                      <div
+                        className="calendar-modal-workout"
+                        key={workout.id}
+                      >
+                        <div>
+                          <strong>
+                            {
+                              workout.workoutName
+                            }
+                          </strong>
+
+                          <span>
+                            {
+                              workout.exerciseName
+                            }
+                          </span>
+                        </div>
+
+                        <div className="calendar-modal-workout-stats">
+                          <small>
+                            {workout.duration ||
+                              0}{" "}
+                            min
+                          </small>
+
+                          <small>
+                            🔥{" "}
+                            {workoutCalories}{" "}
+                            kcal
+                          </small>
+                        </div>
                       </div>
-
-                      <small>
-                        {workout.duration ||
-                          0}{" "}
-                        min
-                      </small>
-                    </div>
-                  )
+                    );
+                  }
                 )}
               </div>
             )}
@@ -972,3 +1680,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+          

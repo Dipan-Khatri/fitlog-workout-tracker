@@ -3110,3 +3110,1876 @@ button.weekly-calendar-day:focus-visible {
     min-height: 105px;
   }
 }
+
+/* ==========================================
+   DASHBOARD V3 — CALORIES, INSIGHTS & GOALS
+========================================== */
+
+/* FITNESS INSIGHTS */
+
+.dashboard-insights-section {
+  margin: 26px 0;
+  padding: 26px;
+  border: 1px solid #dce6f2;
+  border-radius: 19px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(31, 74, 136, 0.08);
+}
+
+.dashboard-insights-section .section-heading h2 {
+  margin: 0;
+  color: #102542;
+  font-size: 25px;
+}
+
+.dashboard-insights-section .section-heading p {
+  margin: 7px 0 0;
+  color: #77869a;
+  font-size: 14px;
+}
+
+.dashboard-insights-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(190px, 1fr));
+  gap: 16px;
+  margin-top: 23px;
+}
+
+.dashboard-insights-grid article {
+  display: flex;
+  min-width: 0;
+  min-height: 112px;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #e0e8f2;
+  border-radius: 15px;
+  background:
+    linear-gradient(
+      145deg,
+      #fbfdff,
+      #f4f8ff
+    );
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dashboard-insights-grid article:hover {
+  transform: translateY(-3px);
+  border-color: #bfd3f1;
+  box-shadow: 0 12px 24px rgba(31, 74, 136, 0.1);
+}
+
+.dashboard-insights-grid article > span {
+  display: grid;
+  width: 49px;
+  height: 49px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 14px;
+  background: #e7f0ff;
+  font-size: 23px;
+}
+
+.dashboard-insights-grid article > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dashboard-insights-grid small {
+  color: #7b899d;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dashboard-insights-grid strong {
+  overflow: hidden;
+  color: #163457;
+  font-size: 17px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-insights-grid em {
+  overflow: hidden;
+  color: #7c8ba0;
+  font-size: 12px;
+  font-style: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* WEEKLY GOAL SELECTOR */
+
+.weekly-goal-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 25px;
+  padding: 14px 16px;
+  border: 1px solid #dce6f2;
+  border-radius: 12px;
+  color: #173457;
+  background: #f7faff;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.weekly-goal-selector select {
+  min-height: 39px;
+  padding: 0 11px;
+  border: 1px solid #cbd8e8;
+  border-radius: 9px;
+  outline: none;
+  color: #173457;
+  background: #ffffff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.weekly-goal-selector select:focus {
+  border-color: #246cf1;
+  box-shadow: 0 0 0 4px rgba(36, 108, 241, 0.11);
+}
+
+.goal-save-message {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #bde5ca;
+  border-radius: 9px;
+  color: #16743c;
+  background: #eaf9ef;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.weekly-calorie-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #f0d8a6;
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      145deg,
+      #fffaf0,
+      #fff4dc
+    );
+}
+
+.weekly-calorie-summary span {
+  color: #80601d;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.weekly-calorie-summary strong {
+  color: #9b5500;
+  font-size: 17px;
+}
+
+/* CALORIE DETAILS */
+
+.calendar-calorie-count {
+  margin-top: 5px !important;
+  color: #b45f06 !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+}
+
+.recent-calories {
+  color: #b45f06 !important;
+  font-weight: 700;
+}
+
+.calendar-modal-workout-stats {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 5px;
+  text-align: right;
+}
+
+.calendar-modal-workout-stats small:last-child {
+  color: #b45f06;
+  font-weight: 800;
+}
+
+/* IMPROVE CALENDAR CARD HEIGHT */
+
+.weekly-calendar-day {
+  min-height: 180px;
+}
+
+.weekly-calendar-day.has-note {
+  min-height: 205px;
+}
+
+/* CALORIE STAT CARD */
+
+.stat-card .stat-icon.orange {
+  background:
+    linear-gradient(
+      145deg,
+      #fff1df,
+      #ffe5c2
+    );
+}
+
+/* DASHBOARD SUMMARY */
+
+.dashboard-summary-item:nth-child(3) {
+  border-color: #f1d3a1;
+  background: #fff9ee;
+}
+
+.dashboard-summary-item:nth-child(3) strong {
+  color: #b45f06;
+}
+
+/* BETTER WEEKLY GOAL CARD */
+
+.weekly-goal-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.weekly-goal-card::after {
+  position: absolute;
+  right: -50px;
+  bottom: -70px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(36, 108, 241, 0.05);
+  content: "";
+  pointer-events: none;
+}
+
+.goal-progress-information {
+  position: relative;
+  z-index: 2;
+  margin-top: 25px;
+}
+
+.goal-action-link {
+  position: relative;
+  z-index: 2;
+}
+
+/* RESPONSIVE DASHBOARD INSIGHTS */
+
+@media (max-width: 1150px) {
+  .dashboard-insights-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .dashboard-insights-section {
+    padding: 21px 17px;
+  }
+
+  .dashboard-insights-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .weekly-goal-selector {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .weekly-goal-selector select {
+    width: 100%;
+  }
+
+  .weekly-calorie-summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .calendar-modal-workout-stats {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+/* ==========================================
+   HISTORY V3 — CALORIES, PRS & FILTERS
+========================================== */
+
+.upgraded-history-header {
+  align-items: flex-start;
+}
+
+.history-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.history-header-actions button {
+  min-height: 46px;
+  padding: 0 16px;
+  border: 1px solid #c5d7f2;
+  border-radius: 10px;
+  color: #1c63e8;
+  background: #f1f6ff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.history-header-actions button:hover {
+  border-color: #246cf1;
+  background: #e7f0ff;
+}
+
+.history-export-message {
+  margin: 0 0 20px;
+  padding: 13px 16px;
+  border: 1px solid #b9e5c7;
+  border-radius: 11px;
+  color: #13753b;
+  background: #e9f8ee;
+  font-weight: 800;
+}
+
+/* SUMMARY CARDS */
+
+.history-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(170px, 1fr));
+  gap: 16px;
+  margin: 25px 0;
+}
+
+.history-summary-grid article {
+  display: flex;
+  min-height: 105px;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #dce6f2;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(31, 74, 136, 0.07);
+}
+
+.history-summary-grid article > span {
+  display: grid;
+  width: 47px;
+  height: 47px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 13px;
+  background: #eaf2ff;
+  font-size: 22px;
+}
+
+.history-summary-grid article > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.history-summary-grid small {
+  color: #7b899d;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.history-summary-grid strong {
+  color: #163457;
+  font-size: 18px;
+}
+
+/* FILTERS */
+
+.upgraded-history-filter-card {
+  grid-template-columns:
+    minmax(240px, 1.4fr)
+    minmax(140px, 0.65fr)
+    minmax(140px, 0.65fr)
+    minmax(150px, 0.75fr)
+    auto;
+}
+
+/* WORKOUT CARDS */
+
+.history-workout-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.history-card-accent {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 5px;
+  background: #246cf1;
+}
+
+.category-chest .history-card-accent {
+  background: #ef4444;
+}
+
+.category-back .history-card-accent {
+  background: #8b5cf6;
+}
+
+.category-legs .history-card-accent {
+  background: #22a75a;
+}
+
+.category-cardio .history-card-accent {
+  background: #06b6d4;
+}
+
+.category-full-body .history-card-accent {
+  background: #f59e0b;
+}
+
+.category-strength .history-card-accent {
+  background: #246cf1;
+}
+
+.history-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.history-category-badge,
+.history-difficulty-badge,
+.history-pr-badge {
+  display: inline-flex;
+  min-height: 27px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.history-category-badge.chest {
+  color: #a51d2c;
+  background: #ffe8eb;
+}
+
+.history-category-badge.back {
+  color: #6d36a8;
+  background: #f1e8ff;
+}
+
+.history-category-badge.legs {
+  color: #16743c;
+  background: #e8f8ee;
+}
+
+.history-category-badge.cardio {
+  color: #0e7181;
+  background: #e5f9fc;
+}
+
+.history-category-badge.full-body {
+  color: #9a5a00;
+  background: #fff2dc;
+}
+
+.history-category-badge.strength {
+  color: #1d65eb;
+  background: #eaf2ff;
+}
+
+.history-difficulty-badge.easy {
+  color: #16743c;
+  background: #e8f8ee;
+}
+
+.history-difficulty-badge.medium {
+  color: #8d6500;
+  background: #fff5cc;
+}
+
+.history-difficulty-badge.hard {
+  color: #b42334;
+  background: #fff0f2;
+}
+
+.history-pr-badge {
+  color: #7d5900;
+  background:
+    linear-gradient(
+      135deg,
+      #fff1b8,
+      #ffd76a
+    );
+  box-shadow: 0 6px 14px rgba(209, 152, 18, 0.14);
+}
+
+.upgraded-history-stats {
+  grid-template-columns:
+    repeat(5, minmax(100px, 1fr));
+}
+
+.history-calorie-stat {
+  border: 1px solid #f1d3a1;
+  background: #fff9ee !important;
+}
+
+.history-calorie-stat strong {
+  color: #b45f06;
+}
+
+/* CARD ICON COLORS */
+
+.category-chest .history-workout-icon {
+  background: #ffe8eb;
+}
+
+.category-back .history-workout-icon {
+  background: #f1e8ff;
+}
+
+.category-legs .history-workout-icon {
+  background: #e8f8ee;
+}
+
+.category-cardio .history-workout-icon {
+  background: #e5f9fc;
+}
+
+.category-full-body .history-workout-icon {
+  background: #fff2dc;
+}
+
+.category-strength .history-workout-icon {
+  background: #eaf2ff;
+}
+
+/* EDIT BUTTON */
+
+.history-edit-button {
+  align-self: center;
+  white-space: nowrap;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1250px) {
+  .upgraded-history-filter-card {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .history-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .upgraded-history-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .upgraded-history-header {
+    flex-direction: column;
+  }
+
+  .history-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .history-header-actions button,
+  .history-header-actions .primary-link {
+    flex: 1;
+  }
+
+  .history-summary-grid,
+  .upgraded-history-filter-card,
+  .upgraded-history-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .history-workout-card {
+    padding-left: 25px;
+  }
+
+  .history-card-badges {
+    margin-top: 6px;
+  }
+}
+/* ==========================================
+   PROFILE V3 — BMI, GOALS & MEMBER STATS
+========================================== */
+
+.profile-page {
+  width: 100%;
+}
+
+.profile-overview-grid {
+  display: grid;
+  grid-template-columns:
+    minmax(260px, 1.3fr)
+    repeat(3, minmax(170px, 0.7fr));
+  gap: 16px;
+  margin: 26px 0;
+}
+
+.profile-completion-card,
+.profile-bmi-card,
+.profile-stat-card {
+  min-height: 125px;
+  padding: 20px;
+  border: 1px solid #dce6f2;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(31, 74, 136, 0.07);
+}
+
+.profile-completion-card > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.profile-completion-card span {
+  color: #71809a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.profile-completion-card strong {
+  color: #1e66ec;
+  font-size: 25px;
+}
+
+.profile-completion-card p {
+  margin: 13px 0 0;
+  color: #7d8a9d;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.profile-completion-bar {
+  width: 100%;
+  height: 12px;
+  margin-top: 16px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #e7edf6;
+}
+
+.profile-completion-fill {
+  height: 100%;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      90deg,
+      #1558df,
+      #4e93ff
+    );
+  transition: width 0.4s ease;
+}
+
+.profile-bmi-card,
+.profile-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.profile-bmi-icon,
+.profile-stat-card > span {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 14px;
+  background: #eaf2ff;
+  font-size: 23px;
+}
+
+.profile-bmi-card > div:last-child,
+.profile-stat-card > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.profile-bmi-card span,
+.profile-stat-card small {
+  color: #71809a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.profile-bmi-card strong,
+.profile-stat-card strong {
+  color: #163457;
+  font-size: 22px;
+}
+
+/* PROFILE LAYOUT */
+
+.upgraded-profile-layout {
+  grid-template-columns:
+    minmax(300px, 0.8fr)
+    minmax(0, 1.7fr);
+}
+
+.upgraded-profile-summary {
+  position: sticky;
+  top: 25px;
+}
+
+.upgraded-profile-form {
+  min-width: 0;
+}
+
+/* PROFILE BADGES */
+
+.profile-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 9px;
+  margin: 18px 0 5px;
+}
+
+.profile-level-badge {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-radius: 30px;
+  color: #5f3fa2;
+  background: #f0e8ff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* WEIGHT GOAL CARD */
+
+.profile-weight-goal-card {
+  margin-top: 23px;
+  padding: 17px;
+  border: 1px solid #f1d3a1;
+  border-radius: 13px;
+  background:
+    linear-gradient(
+      145deg,
+      #fffaf0,
+      #fff3d8
+    );
+  text-align: left;
+}
+
+.profile-weight-goal-card span {
+  color: #8c681e;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.profile-weight-goal-card strong {
+  display: block;
+  margin-top: 8px;
+  color: #a35e00;
+  font-size: 25px;
+}
+
+.profile-weight-goal-card p {
+  margin: 5px 0 0;
+  color: #80601d;
+  font-size: 13px;
+}
+
+/* BMI SUMMARY */
+
+.profile-bmi-summary {
+  margin-top: 18px;
+  padding: 17px;
+  border-radius: 13px;
+  text-align: left;
+}
+
+.profile-bmi-summary > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.profile-bmi-summary span {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.profile-bmi-summary strong {
+  font-size: 24px;
+}
+
+.profile-bmi-summary p {
+  margin: 9px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.profile-bmi-summary.healthy {
+  border: 1px solid #bde5ca;
+  color: #16743c;
+  background: #eaf9ef;
+}
+
+.profile-bmi-summary.underweight {
+  border: 1px solid #bed8f4;
+  color: #24629e;
+  background: #edf6ff;
+}
+
+.profile-bmi-summary.overweight {
+  border: 1px solid #f1d394;
+  color: #8c6200;
+  background: #fff7dc;
+}
+
+.profile-bmi-summary.obesity {
+  border: 1px solid #f0b7bf;
+  color: #ac2638;
+  background: #fff0f2;
+}
+
+.profile-bmi-summary.unknown {
+  border: 1px solid #dce6f2;
+  color: #617086;
+  background: #f5f8fc;
+}
+
+/* BMI STATUS BADGES */
+
+.profile-bmi-status {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 26px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.profile-bmi-status.healthy {
+  color: #16743c;
+  background: #e5f7eb;
+}
+
+.profile-bmi-status.underweight {
+  color: #24629e;
+  background: #e7f2ff;
+}
+
+.profile-bmi-status.overweight {
+  color: #8c6200;
+  background: #fff2c9;
+}
+
+.profile-bmi-status.obesity {
+  color: #ac2638;
+  background: #ffe4e8;
+}
+
+.profile-bmi-status.unknown {
+  color: #617086;
+  background: #e9eef5;
+}
+
+/* PROFILE FORM */
+
+.upgraded-profile-form .profile-form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.upgraded-profile-form select {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.upgraded-profile-form input,
+.upgraded-profile-form textarea,
+.upgraded-profile-form select {
+  min-height: 48px;
+}
+
+.upgraded-profile-form textarea {
+  min-height: 130px;
+}
+
+/* LIVE BMI PANEL */
+
+.profile-live-bmi-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 25px;
+  padding: 20px;
+  border: 1px solid #dce6f2;
+  border-radius: 14px;
+  background: #f7faff;
+}
+
+.profile-live-bmi-panel > div {
+  display: flex;
+  min-height: 80px;
+  justify-content: center;
+  padding: 15px;
+  flex-direction: column;
+  gap: 7px;
+  border: 1px solid #e0e8f2;
+  border-radius: 11px;
+  background: #ffffff;
+}
+
+.profile-live-bmi-panel span {
+  color: #71809a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.profile-live-bmi-panel strong {
+  color: #163457;
+  font-size: 24px;
+}
+
+.profile-live-bmi-panel > p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #7d8a9d;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* PROFILE MESSAGE */
+
+.upgraded-profile-form .profile-message {
+  margin-bottom: 5px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1150px) {
+  .profile-overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .upgraded-profile-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .upgraded-profile-summary {
+    position: static;
+  }
+}
+
+@media (max-width: 700px) {
+  .profile-overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .upgraded-profile-form .profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-live-bmi-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-live-bmi-panel > p {
+    grid-column: auto;
+  }
+
+  .profile-badge-row {
+    flex-direction: column;
+  }
+
+  .profile-goal-badge,
+  .profile-level-badge {
+    width: 100%;
+  }
+}
+
+/* ==========================================
+   PROGRESS V4 — CALORIES, RECORDS & BADGES
+========================================== */
+
+.progress-page {
+  width: 100%;
+}
+
+.progress-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.progress-export-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.progress-export-actions button {
+  min-height: 46px;
+  padding: 0 17px;
+  border: 1px solid #c5d7f2;
+  border-radius: 10px;
+  color: #1c63e8;
+  background: #f1f6ff;
+  font-family: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.progress-export-actions button:hover {
+  transform: translateY(-2px);
+  border-color: #246cf1;
+  background: #e7f0ff;
+  box-shadow: 0 9px 18px rgba(36, 108, 241, 0.12);
+}
+
+.export-message {
+  margin: 0 0 22px;
+  padding: 14px 17px;
+  border: 1px solid #b9e5c7;
+  border-radius: 11px;
+  color: #13753b;
+  background: #e9f8ee;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* ==========================================
+   HEALTH SUMMARY
+========================================== */
+
+.progress-health-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(170px, 1fr));
+  gap: 16px;
+  margin-top: 26px;
+}
+
+.progress-health-card {
+  display: flex;
+  min-width: 0;
+  min-height: 125px;
+  align-items: center;
+  gap: 14px;
+  padding: 19px;
+  border: 1px solid #dce6f2;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(31, 74, 136, 0.07);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.progress-health-card:hover {
+  transform: translateY(-3px);
+  border-color: #bfd3f1;
+  box-shadow: 0 14px 28px rgba(31, 74, 136, 0.11);
+}
+
+.progress-health-icon {
+  display: grid;
+  width: 49px;
+  height: 49px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 14px;
+  background: #eaf2ff;
+  font-size: 23px;
+}
+
+.progress-health-card > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.progress-health-card small {
+  color: #71809a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.progress-health-card strong {
+  overflow: hidden;
+  color: #163457;
+  font-size: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progress-health-card em {
+  color: #7c8ba0;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.progress-bmi-badge {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 26px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.progress-bmi-badge.healthy {
+  color: #16743c;
+  background: #e5f7eb;
+}
+
+.progress-bmi-badge.underweight {
+  color: #24629e;
+  background: #e7f2ff;
+}
+
+.progress-bmi-badge.overweight {
+  color: #8c6200;
+  background: #fff2c9;
+}
+
+.progress-bmi-badge.obesity {
+  color: #ac2638;
+  background: #ffe4e8;
+}
+
+.progress-bmi-badge.unknown {
+  color: #617086;
+  background: #e9eef5;
+}
+
+/* ==========================================
+   CHARTS
+========================================== */
+
+.progress-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 28px;
+}
+
+.progress-chart-grid.secondary {
+  margin-top: 22px;
+}
+
+.progress-chart-card {
+  min-width: 0;
+  padding: 25px;
+  border: 1px solid #dce6f2;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(31, 74, 136, 0.08);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.progress-chart-card:hover {
+  transform: translateY(-2px);
+  border-color: #c5d7ef;
+  box-shadow: 0 16px 34px rgba(31, 74, 136, 0.11);
+}
+
+.chart-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.chart-card-header h2 {
+  margin: 0;
+  color: #102542;
+  font-size: 20px;
+}
+
+.chart-card-header p {
+  margin: 6px 0 0;
+  color: #77869a;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.chart-badge {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 11px;
+  border-radius: 20px;
+  color: #1e66ec;
+  background: #eaf2ff;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.chart-container {
+  width: 100%;
+  height: 320px;
+}
+
+.pie-chart-container {
+  height: 350px;
+}
+
+.chart-empty-message {
+  display: grid;
+  min-height: 320px;
+  place-items: center;
+  color: #7e8ba0;
+  text-align: center;
+}
+
+.progress-empty-state {
+  margin-top: 28px;
+  padding: 70px 30px;
+  border: 1px dashed #b9c9dd;
+  border-radius: 18px;
+  background: #f8fbff;
+  text-align: center;
+}
+
+.progress-empty-state > div {
+  font-size: 48px;
+}
+
+.progress-empty-state h2 {
+  margin: 16px 0 8px;
+  color: #153459;
+}
+
+.progress-empty-state p {
+  margin: 0;
+  color: #758399;
+  line-height: 1.6;
+}
+
+/* Recharts tooltip */
+
+.recharts-tooltip-wrapper {
+  outline: none;
+}
+
+.recharts-default-tooltip {
+  border-radius: 12px !important;
+  box-shadow: 0 10px 26px rgba(31, 74, 136, 0.12);
+}
+
+.recharts-tooltip-label {
+  color: #163457;
+  font-weight: 800;
+}
+
+/* ==========================================
+   PERSONAL RECORDS
+========================================== */
+
+.personal-records-section {
+  margin-top: 28px;
+  padding: 27px;
+  border: 1px solid #dce6f2;
+  border-radius: 19px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(31, 74, 136, 0.08);
+}
+
+.personal-records-section .section-heading h2 {
+  margin: 0;
+  color: #102542;
+  font-size: 25px;
+}
+
+.personal-records-section .section-heading p {
+  margin: 7px 0 0;
+  color: #77869a;
+}
+
+.personal-record-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(170px, 1fr));
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.personal-record-grid article {
+  display: flex;
+  min-width: 0;
+  min-height: 105px;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #e0e8f2;
+  border-radius: 14px;
+  background: #f7faff;
+}
+
+.personal-record-grid article > span {
+  display: grid;
+  width: 47px;
+  height: 47px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 13px;
+  background: #e7f0ff;
+  font-size: 21px;
+}
+
+.personal-record-grid article > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.personal-record-grid small {
+  color: #77869a;
+}
+
+.personal-record-grid strong {
+  overflow: hidden;
+  color: #163457;
+  font-size: 17px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Highlight records */
+
+.progress-highlight-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(190px, 1fr));
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.progress-highlight-card {
+  min-height: 155px;
+  padding: 21px;
+  border-radius: 15px;
+  color: #ffffff;
+}
+
+.progress-highlight-card span {
+  display: block;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.progress-highlight-card strong {
+  display: block;
+  margin-top: 15px;
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.progress-highlight-card p {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.progress-highlight-card.volume {
+  background:
+    linear-gradient(
+      135deg,
+      #1558df,
+      #2f7bff
+    );
+}
+
+.progress-highlight-card.duration {
+  background:
+    linear-gradient(
+      135deg,
+      #159455,
+      #27b56b
+    );
+}
+
+.progress-highlight-card.calories {
+  background:
+    linear-gradient(
+      135deg,
+      #d97706,
+      #f59e0b
+    );
+}
+
+/* Exercise records */
+
+.exercise-records-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid #e5edf6;
+}
+
+.exercise-records-header h3 {
+  margin: 0;
+  color: #153459;
+  font-size: 20px;
+}
+
+.exercise-records-header p {
+  margin: 6px 0 0;
+  color: #77869a;
+  font-size: 14px;
+}
+
+.exercise-records-header > span {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 12px;
+  border-radius: 20px;
+  color: #7d5900;
+  background: #ffedb2;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.exercise-pr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.exercise-pr-card {
+  display: flex;
+  min-height: 115px;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #eed28f;
+  border-radius: 14px;
+  background:
+    linear-gradient(
+      145deg,
+      #fffdf6,
+      #fff8df
+    );
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.exercise-pr-card:hover {
+  transform: translateY(-3px);
+  border-color: #e2bd58;
+  box-shadow: 0 13px 26px rgba(177, 126, 18, 0.13);
+}
+
+.exercise-pr-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 13px;
+  background: #ffe9a0;
+  font-size: 22px;
+}
+
+.exercise-pr-card > div:last-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.exercise-pr-card span,
+.exercise-pr-card small {
+  overflow: hidden;
+  color: #80621a;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.exercise-pr-card strong {
+  color: #4c390b;
+  font-size: 20px;
+}
+
+.no-records-message {
+  margin-top: 20px;
+  padding: 25px;
+  border: 1px dashed #c5d3e4;
+  border-radius: 13px;
+  color: #758399;
+  background: #f8fbff;
+  text-align: center;
+}
+
+/* ==========================================
+   ACHIEVEMENTS
+========================================== */
+
+.achievement-section {
+  margin-top: 28px;
+  padding: 28px;
+  border: 1px solid #dce6f2;
+  border-radius: 19px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(31, 74, 136, 0.08);
+}
+
+.achievement-section .section-heading h2 {
+  margin: 0;
+  color: #102542;
+  font-size: 25px;
+}
+
+.achievement-section .section-heading p {
+  margin: 7px 0 0;
+  color: #77869a;
+}
+
+.achievement-overview {
+  display: grid;
+  grid-template-columns: auto minmax(180px, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  margin: 24px 0;
+  padding: 18px;
+  border-radius: 14px;
+  background: #f6f9fe;
+}
+
+.achievement-overview > div:first-child {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.achievement-overview > div:first-child strong,
+.achievement-overview > strong {
+  color: #1e66ec;
+  font-size: 24px;
+}
+
+.achievement-overview span {
+  color: #758399;
+  font-size: 13px;
+}
+
+.achievement-progress-bar {
+  width: 100%;
+  height: 14px;
+  overflow: hidden;
+  border-radius: 30px;
+  background: #e5ebf3;
+}
+
+.achievement-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      90deg,
+      #1558df,
+      #4e93ff
+    );
+  transition: width 0.4s ease;
+}
+
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(250px, 1fr));
+  gap: 17px;
+}
+
+.achievement-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 15px;
+  min-height: 145px;
+  padding: 20px;
+  border: 1px solid #e0e8f2;
+  border-radius: 16px;
+  overflow: hidden;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.achievement-card:hover {
+  transform: translateY(-3px);
+}
+
+.achievement-card.unlocked {
+  border-color: #f0d18a;
+  background:
+    linear-gradient(
+      145deg,
+      #fffdf6,
+      #fff8df
+    );
+  box-shadow: 0 12px 26px rgba(177, 126, 18, 0.1);
+}
+
+.achievement-card.locked {
+  background: #f7f9fc;
+}
+
+.achievement-card.unlocked:hover {
+  border-color: #e3b94f;
+  box-shadow: 0 16px 31px rgba(177, 126, 18, 0.15);
+}
+
+.achievement-card.locked:hover {
+  border-color: #cbd7e6;
+  box-shadow: 0 14px 28px rgba(31, 74, 136, 0.09);
+}
+
+.achievement-icon {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  border-radius: 16px;
+  font-size: 28px;
+}
+
+.achievement-card.unlocked .achievement-icon {
+  background:
+    linear-gradient(
+      135deg,
+      #fff1b8,
+      #ffd76a
+    );
+}
+
+.achievement-card.locked .achievement-icon {
+  background: #e8edf4;
+  filter: grayscale(1);
+  opacity: 0.65;
+}
+
+.achievement-content {
+  min-width: 0;
+}
+
+.achievement-content h3 {
+  margin: 0;
+  color: #152e50;
+  font-size: 17px;
+}
+
+.achievement-content p {
+  margin: 6px 0 7px;
+  color: #77869a;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.achievement-content small {
+  color: #718097;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.achievement-progress {
+  width: 100%;
+  height: 9px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #e3e9f1;
+}
+
+.achievement-progress-value {
+  height: 100%;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      90deg,
+      #1b63e8,
+      #5aa0ff
+    );
+  transition: width 0.4s ease;
+}
+
+.achievement-card.unlocked .achievement-progress-value {
+  background:
+    linear-gradient(
+      90deg,
+      #e4a917,
+      #ffd35a
+    );
+}
+
+.achievement-status {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.achievement-card.unlocked .achievement-status {
+  color: #7d5900;
+  background: #ffedb2;
+}
+
+.achievement-card.locked .achievement-status {
+  color: #708096;
+  background: #e8edf4;
+}
+
+/* ==========================================
+   RESPONSIVE PROGRESS PAGE
+========================================== */
+
+@media (max-width: 1150px) {
+  .progress-chart-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-health-grid,
+  .personal-record-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .progress-highlight-grid,
+  .exercise-pr-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .progress-page-header {
+    flex-direction: column;
+  }
+
+  .progress-export-actions {
+    width: 100%;
+  }
+
+  .progress-export-actions button {
+    flex: 1;
+  }
+
+  .achievement-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .achievement-overview {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+  }
+
+  .achievement-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .achievement-status {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 650px) {
+  .progress-health-grid,
+  .personal-record-grid,
+  .progress-highlight-grid,
+  .exercise-pr-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-chart-card,
+  .personal-records-section,
+  .achievement-section {
+    padding: 20px 15px;
+  }
+
+  .chart-container {
+    height: 285px;
+  }
+
+  .chart-card-header,
+  .exercise-records-header {
+    flex-direction: column;
+  }
+
+  .progress-export-actions {
+    flex-direction: column;
+  }
+
+  .progress-export-actions button {
+    width: 100%;
+  }
+
+  .achievement-card {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+
+  .achievement-status {
+    grid-column: auto;
+  }
+}
+
+
+
