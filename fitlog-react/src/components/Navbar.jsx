@@ -7,7 +7,14 @@ function Navbar() {
     localStorage.getItem("fitlogUserName") || "User";
 
   function getLinkClass({ isActive }) {
-    return isActive ? "nav-link active" : "nav-link";
+    return isActive
+      ? "nav-link active"
+      : "nav-link";
+  }
+
+  function handleLogoClick() {
+    // Opens Dashboard and performs a full refresh.
+    window.location.href = "/dashboard";
   }
 
   function handleLogout() {
@@ -22,11 +29,19 @@ function Navbar() {
   return (
     <aside className="fitlog-sidebar">
       <div className="sidebar-logo-section">
-        <img
-          src="/fitlog-logo.png"
-          alt="FitLog logo"
-          className="sidebar-logo"
-        />
+        <button
+          type="button"
+          className="sidebar-logo-button"
+          onClick={handleLogoClick}
+          aria-label="Open and refresh Dashboard"
+          title="Return to Dashboard"
+        >
+          <img
+            src="/fitlog-logo.png"
+            alt="FitLog logo"
+            className="sidebar-logo"
+          />
+        </button>
       </div>
 
       <nav className="sidebar-navigation">

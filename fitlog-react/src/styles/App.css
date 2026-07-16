@@ -4981,5 +4981,49 @@ button.weekly-calendar-day:focus-visible {
   }
 }
 
+/* ==========================================
+   EXTRA LARGE CLICKABLE SIDEBAR LOGO
+========================================== */
 
+.sidebar-logo-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  padding: 0;
+  border-bottom: 1px solid #e4ebf4;
+}
+
+.sidebar-logo-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.sidebar-logo-button:hover {
+  transform: scale(1.03);
+}
+
+.sidebar-logo {
+  width: 380px;
+  max-width: none;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 800px) {
+  .sidebar-logo-section {
+    height: 220px;
+  }
+
+  .sidebar-logo {
+    width: 260px;
+  }
+}
 
