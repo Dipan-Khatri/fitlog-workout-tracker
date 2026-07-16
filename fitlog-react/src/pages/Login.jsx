@@ -264,14 +264,58 @@ if (
   );
 }
 
-    if (!matchedUser) {
-      setMessage({
-        type: "error",
-        text: "Incorrect email or password.",
-      });
+    if (matchedUser.id === "fitlog-demo-user") {
+  const demoWorkoutKey =
+    "fitlogWorkouts_fitlog-demo-user";
 
-      return;
-    }
+  const existingDemoWorkouts =
+    JSON.parse(
+      localStorage.getItem(demoWorkoutKey)
+    ) || [];
+
+  if (existingDemoWorkouts.length === 0) {
+    const demoWorkouts = [
+      {
+        id: "demo-workout-1",
+        workoutName: "Chest Day",
+        exerciseName: "Bench Press",
+        date: new Date().toISOString().split("T")[0],
+        duration: 60,
+        sets: 4,
+        reps: 10,
+        weight: 135,
+        notes:
+          "Warm up first and focus on controlled repetitions.",
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: "demo-workout-2",
+        workoutName: "Leg Day",
+        exerciseName: "Squat",
+        date: new Date(
+          Date.now() - 86400000
+        )
+          .toISOString()
+          .split("T")[0],
+        duration: 70,
+        sets: 4,
+        reps: 8,
+        weight: 155,
+        notes:
+          "Maintain proper depth and controlled form.",
+        createdAt: new Date(
+          Date.now() - 86400000
+        ).toISOString(),
+      },
+    ];
+
+    localStorage.setItem(
+      demoWorkoutKey,
+      JSON.stringify(demoWorkouts)
+    );
+  }
+}
+
 
     localStorage.setItem(
       "fitlogLoggedIn",
