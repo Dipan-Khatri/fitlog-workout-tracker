@@ -4982,48 +4982,543 @@ button.weekly-calendar-day:focus-visible {
 }
 
 /* ==========================================
-   EXTRA LARGE CLICKABLE SIDEBAR LOGO
+   FINAL SIDEBAR UPGRADE
+   LARGE LOGO + XP LEVEL + FOOTER
 ========================================== */
+
+.fitlog-sidebar {
+  display: flex;
+  height: 100vh;
+  min-height: 100vh;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* LARGE CLICKABLE LOGO */
 
 .sidebar-logo-section {
   display: flex;
-  justify-content: center;
+  min-height: 300px;
   align-items: center;
-  height: 300px;
+  justify-content: center;
   padding: 0;
   border-bottom: 1px solid #e4ebf4;
+  overflow: hidden;
 }
 
 .sidebar-logo-button {
   display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
   height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   border: none;
   background: transparent;
   cursor: pointer;
-  transition: transform 0.25s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
 }
 
 .sidebar-logo-button:hover {
-  transform: scale(1.03);
+  transform: scale(1.025);
+  background: #f7faff;
+}
+
+.sidebar-logo-button:focus-visible {
+  outline: 3px solid rgba(36, 108, 241, 0.24);
+  outline-offset: -4px;
+}
+
+.sidebar-logo-button:active {
+  transform: scale(0.99);
 }
 
 .sidebar-logo {
+  display: block;
   width: 380px;
   max-width: none;
   height: auto;
   object-fit: contain;
 }
 
+/* NAVIGATION */
+
+.sidebar-navigation {
+  flex-shrink: 0;
+}
+
+/* XP AND LEVEL CARD */
+
+.sidebar-level-card {
+  margin: 18px 14px 15px;
+  padding: 17px;
+  border: 1px solid #d9e5f5;
+  border-radius: 15px;
+  background:
+    linear-gradient(
+      145deg,
+      #f8fbff,
+      #edf4ff
+    );
+  box-shadow: 0 10px 24px rgba(31, 74, 136, 0.08);
+}
+
+.sidebar-level-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-level-icon {
+  display: grid;
+  width: 43px;
+  height: 43px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      135deg,
+      #fff1b8,
+      #ffd66a
+    );
+  font-size: 21px;
+}
+
+.sidebar-level-header > div:last-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.sidebar-level-header span {
+  color: #71809a;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sidebar-level-header strong {
+  color: #14365f;
+  font-size: 17px;
+}
+
+.sidebar-xp-information {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.sidebar-xp-information span {
+  color: #687b96;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sidebar-xp-information strong {
+  color: #1e66ec;
+  font-size: 11px;
+}
+
+.sidebar-xp-progress {
+  width: 100%;
+  height: 10px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #dfe8f5;
+}
+
+.sidebar-xp-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      90deg,
+      #1558df,
+      #4b92ff
+    );
+  transition: width 0.4s ease;
+}
+
+.sidebar-level-card p {
+  margin: 10px 0 0;
+  color: #76869b;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+/* LOGOUT */
+
+.sidebar-logout {
+  flex-shrink: 0;
+}
+
+/* BOTTOM PROFILE AND FOOTER */
+
+.sidebar-bottom-section {
+  margin-top: auto;
+  padding: 0 14px 18px;
+}
+
+.sidebar-bottom-section .sidebar-user {
+  width: 100%;
+  margin: 0;
+}
+
+.sidebar-footer {
+  display: flex;
+  align-items: center;
+  margin-top: 13px;
+  padding-top: 13px;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid #e1e8f2;
+  text-align: center;
+}
+
+.sidebar-footer strong {
+  color: #37506f;
+  font-size: 11px;
+}
+
+.sidebar-footer span {
+  color: #8090a5;
+  font-size: 10px;
+}
+
+.sidebar-footer small {
+  color: #9aa6b6;
+  font-size: 9px;
+}
+
+/* RESPONSIVE SIDEBAR */
+
 @media (max-width: 800px) {
   .sidebar-logo-section {
-    height: 220px;
+    min-height: 210px;
   }
 
   .sidebar-logo {
-    width: 260px;
+    width: 280px;
+  }
+
+  .sidebar-level-card {
+    margin: 14px 10px;
+    padding: 14px;
+  }
+
+  .sidebar-bottom-section {
+    padding: 0 10px 14px;
+  }
+}
+/* ==========================================
+   FINAL PROGRESS UPGRADES
+   HEATMAP + WEEKLY GOAL TRACKER
+========================================== */
+
+/* WEEKLY GOAL TRACKER */
+
+.progress-page > .weekly-goal-card {
+  position: relative;
+  margin: 26px 0;
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid #d8e5f6;
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f3f7ff
+    );
+  box-shadow: 0 12px 30px rgba(31, 74, 136, 0.08);
+}
+
+.progress-page > .weekly-goal-card::after {
+  position: absolute;
+  right: -55px;
+  bottom: -75px;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  background: rgba(36, 108, 241, 0.06);
+  content: "";
+  pointer-events: none;
+}
+
+.weekly-goal-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.weekly-goal-header h2 {
+  margin: 0;
+  color: #102542;
+  font-size: 23px;
+}
+
+.weekly-goal-header p {
+  margin: 7px 0 0;
+  color: #758399;
+  font-size: 14px;
+}
+
+.weekly-goal-header > strong {
+  display: grid;
+  min-width: 78px;
+  min-height: 58px;
+  place-items: center;
+  border-radius: 14px;
+  color: #ffffff;
+  background:
+    linear-gradient(
+      135deg,
+      #1558df,
+      #3d86ff
+    );
+  box-shadow: 0 9px 20px rgba(36, 108, 241, 0.2);
+  font-size: 21px;
+}
+
+.progress-page > .weekly-goal-card
+  .weekly-goal-progress {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 16px;
+  margin-top: 25px;
+  overflow: hidden;
+  border-radius: 30px;
+  background: #dfe8f5;
+}
+
+.weekly-goal-fill {
+  height: 100%;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      90deg,
+      #1558df,
+      #4e93ff
+    );
+  box-shadow: 0 4px 10px rgba(36, 108, 241, 0.2);
+  transition: width 0.4s ease;
+}
+
+.weekly-goal-message {
+  position: relative;
+  z-index: 1;
+  margin: 14px 0 0;
+  color: #52647c;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ==========================================
+   30-DAY WORKOUT HEATMAP
+========================================== */
+
+.workout-heatmap-section {
+  margin-top: 28px;
+  padding: 27px;
+  border: 1px solid #dce6f2;
+  border-radius: 19px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(31, 74, 136, 0.08);
+}
+
+.heatmap-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.heatmap-header h2 {
+  margin: 0;
+  color: #102542;
+  font-size: 25px;
+}
+
+.heatmap-header p {
+  margin: 7px 0 0;
+  color: #77869a;
+  font-size: 14px;
+}
+
+.heatmap-total {
+  display: flex;
+  min-width: 95px;
+  min-height: 68px;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  flex-direction: column;
+  gap: 3px;
+  border: 1px solid #d6e4f7;
+  border-radius: 14px;
+  background: #f1f6ff;
+}
+
+.heatmap-total strong {
+  color: #1e66ec;
+  font-size: 24px;
+}
+
+.heatmap-total span {
+  color: #74839a;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.workout-heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(38px, 1fr));
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.heatmap-day {
+  position: relative;
+  display: grid;
+  min-height: 48px;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: default;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.heatmap-day:hover {
+  transform: translateY(-3px) scale(1.04);
+  border-color: #8db3ec;
+  box-shadow: 0 8px 16px rgba(31, 74, 136, 0.12);
+}
+
+.heatmap-day span {
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.heatmap-day small {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.heatmap-day.empty {
+  color: #8592a5;
+  background: #edf1f6;
+}
+
+.heatmap-day.low {
+  color: #17653a;
+  background: #c9efd5;
+}
+
+.heatmap-day.medium {
+  color: #0e5730;
+  background: #72d692;
+}
+
+.heatmap-day.high {
+  color: #ffffff;
+  background:
+    linear-gradient(
+      145deg,
+      #1a9e52,
+      #087536
+    );
+}
+
+.heatmap-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 18px;
+  color: #7b899d;
+  font-size: 11px;
+}
+
+.heatmap-legend {
+  display: flex;
+  gap: 5px;
+}
+
+.heatmap-legend i {
+  display: block;
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+}
+
+.heatmap-legend .empty {
+  background: #edf1f6;
+}
+
+.heatmap-legend .low {
+  background: #c9efd5;
+}
+
+.heatmap-legend .medium {
+  background: #72d692;
+}
+
+.heatmap-legend .high {
+  background: #087536;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 950px) {
+  .workout-heatmap-grid {
+    grid-template-columns: repeat(6, minmax(38px, 1fr));
   }
 }
 
+@media (max-width: 650px) {
+  .progress-page > .weekly-goal-card,
+  .workout-heatmap-section {
+    padding: 20px 16px;
+  }
+
+  .weekly-goal-header,
+  .heatmap-header {
+    flex-direction: column;
+  }
+
+  .weekly-goal-header > strong,
+  .heatmap-total {
+    width: 100%;
+  }
+
+  .workout-heatmap-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .heatmap-day {
+    min-height: 44px;
+  }
+
+  .heatmap-footer {
+    justify-content: center;
+  }
+}

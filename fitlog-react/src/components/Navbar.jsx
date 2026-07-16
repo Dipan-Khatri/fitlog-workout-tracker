@@ -3,8 +3,50 @@ import { NavLink, useNavigate } from "react-router-dom";
 function Navbar() {
   const navigate = useNavigate();
 
+  const currentUserId =
+    localStorage.getItem("fitlogCurrentUserId");
+
   const userName =
     localStorage.getItem("fitlogUserName") || "User";
+
+  const workoutKey = currentUserId
+    ? `fitlogWorkouts_${currentUserId}`
+    : null;
+
+  let workouts = [];
+
+  try {
+    workouts = workoutKey
+      ? JSON.parse(localStorage.getItem(workoutKey)) || []
+      : [];
+  } catch (error) {
+    console.error("Unable to load workouts:", error);
+    workouts = [];
+  }
+
+  /*
+    XP system:
+    Each saved workout gives the user 100 XP.
+    Every 500 XP increases the user's level.
+  */
+
+  const xpPerWorkout = 100;
+  const xpRequiredPerLevel = 500;
+
+  const totalXp =
+    workouts.length * xpPerWorkout;
+
+  const userLevel =
+    Math.floor(totalXp / xpRequiredPerLevel) + 1;
+
+  const currentLevelXp =
+    totalXp % xpRequiredPerLevel;
+
+  const levelProgress =
+    (currentLevelXp / xpRequiredPerLevel) * 100;
+
+  const xpUntilNextLevel =
+    xpRequiredPerLevel - currentLevelXp;
 
   function getLinkClass({ isActive }) {
     return isActive
@@ -13,7 +55,6 @@ function Navbar() {
   }
 
   function handleLogoClick() {
-    // Opens Dashboard and performs a full refresh.
     window.location.href = "/dashboard";
   }
 
@@ -33,7 +74,7 @@ function Navbar() {
           type="button"
           className="sidebar-logo-button"
           onClick={handleLogoClick}
-          aria-label="Open and refresh Dashboard"
+          aria-label="Return to Dashboard"
           title="Return to Dashboard"
         >
           <img
@@ -86,6 +127,49 @@ function Navbar() {
         </NavLink>
       </nav>
 
+      <section className="sidebar-level-card">
+        <div className="sidebar-level-header">
+          <div className="sidebar-level-icon">
+            🏆
+          </div>
+
+          <div>
+            <span>FitLog Level</span>
+
+            <strong>
+              Level {userLevel}
+            </strong>
+          </div>
+        </div>
+
+        <div className="sidebar-xp-information">
+          <span>
+            {currentLevelXp} / {xpRequiredPerLevel} XP
+          </span>
+
+          <strong>
+            {Math.round(levelProgress)}%
+          </strong>
+        </div>
+
+        <div className="sidebar-xp-progress">
+          <div
+            className="sidebar-xp-progress-fill"
+            style={{
+              width: `${levelProgress}%`,
+            }}
+          />
+        </div>
+
+        <p>
+          {workouts.length === 0
+            ? "Complete your first workout to earn XP."
+            : `${xpUntilNextLevel} XP until Level ${
+                userLevel + 1
+              }.`}
+        </p>
+      </section>
+
       <button
         className="sidebar-logout"
         type="button"
@@ -95,19 +179,29 @@ function Navbar() {
         Logout
       </button>
 
-      <NavLink
-        to="/profile"
-        className="sidebar-user sidebar-user-link"
-      >
-        <div className="user-avatar">
-          {userName.charAt(0).toUpperCase()}
-        </div>
+      <div className="sidebar-bottom-section">
+        <NavLink
+          to="/profile"
+          className="sidebar-user sidebar-user-link"
+        >
+          <div className="user-avatar">
+            {userName.charAt(0).toUpperCase()}
+          </div>
 
-        <div>
-          <strong>{userName}</strong>
-          <small>FitLog Member</small>
-        </div>
-      </NavLink>
+          <div>
+            <strong>{userName}</strong>
+            <small>FitLog Member</small>
+          </div>
+        </NavLink>
+
+        <footer className="sidebar-footer">
+          <strong>FitLog v1.0</strong>
+
+          <span>Track • Train • Improve</span>
+
+          <small>Built with React + Vite</small>
+        </footer>
+      </div>
     </aside>
   );
 }

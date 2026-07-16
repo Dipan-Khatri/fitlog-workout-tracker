@@ -1166,6 +1166,30 @@ function Progress() {
         achievement.unlocked
     );
 
+/* ==========================================
+   WORKOUT HEATMAP
+========================================== */
+
+const last30Days = [];
+
+for (let i = 29; i >= 0; i--) {
+  const date = new Date();
+
+  date.setDate(date.getDate() - i);
+
+  const key = date.toISOString().split("T")[0];
+
+  const count = workouts.filter(
+    (workout) => workout.date === key
+  ).length;
+
+  last30Days.push({
+    date: key,
+    workouts: count,
+  });
+}
+
+
   const completionPercentage =
     achievementDefinitions.length > 0
       ? Math.round(
@@ -1217,6 +1241,79 @@ function Progress() {
           {exportMessage}
         </div>
       )}
+      {/* WEEKLY GOAL TRACKER */}
+
+      {(() => {
+        const weeklyGoal =
+          Number(
+            localStorage.getItem(
+              `fitlogWeeklyGoal_${currentUserId}`
+            )
+          ) || 5;
+
+        const today = new Date();
+
+        const firstDay = new Date(today);
+
+        firstDay.setDate(
+          today.getDate() - today.getDay()
+        );
+
+        const workoutsThisWeek =
+          workouts.filter((workout) => {
+            if (!workout.date) return false;
+
+            return (
+              new Date(workout.date) >= firstDay
+            );
+          }).length;
+
+        const progress =
+          Math.min(
+            (workoutsThisWeek / weeklyGoal) *
+              100,
+            100
+          );
+
+        return (
+          <section className="weekly-goal-card">
+            <div className="weekly-goal-header">
+              <div>
+                <h2>
+                  🎯 Weekly Goal
+                </h2>
+
+                <p>
+                  Stay consistent every
+                  week.
+                </p>
+              </div>
+
+              <strong>
+                {workoutsThisWeek}/
+                {weeklyGoal}
+              </strong>
+            </div>
+
+            <div className="weekly-goal-progress">
+              <div
+                className="weekly-goal-fill"
+                style={{
+                  width: `${progress}%`,
+                }}
+              />
+            </div>
+
+            <p className="weekly-goal-message">
+              {workoutsThisWeek >=
+              weeklyGoal
+                ? "🎉 Weekly goal completed!"
+                : `${weeklyGoal - workoutsThisWeek} workout(s) remaining this week.`}
+            </p>
+          </section>
+        );
+      })()}
+      
 
       <div className="stat-grid">
         <article className="stat-card">
@@ -1972,6 +2069,100 @@ function Progress() {
           </section>
         </>
       )}
+      <section className="workout-heatmap-section">
+        <div className="heatmap-header">
+          <div>
+            <h2>30-Day Workout Activity</h2>
+
+            <p>
+              Your workout consistency during the last
+              30 days.
+            </p>
+          </div>
+
+          <div className="heatmap-total">
+            <strong>
+              {last30Days.reduce(
+                (total, day) =>
+                  total + day.workouts,
+                0
+              )}
+            </strong>
+
+            <span>workouts</span>
+          </div>
+        </div>
+
+        <div className="workout-heatmap-grid">
+          {last30Days.map((day) => {
+            let activityLevel = "empty";
+
+            if (day.workouts === 1) {
+              activityLevel = "low";
+            }
+
+            if (day.workouts === 2) {
+              activityLevel = "medium";
+            }
+
+            if (day.workouts >= 3) {
+              activityLevel = "high";
+            }
+
+            const formattedDate =
+              new Date(
+                `${day.date}T12:00:00`
+              ).toLocaleDateString(
+                "en-US",
+                {
+                  month: "short",
+                  day: "numeric",
+                }
+              );
+
+            return (
+              <div
+                key={day.date}
+                className={`heatmap-day ${activityLevel}`}
+                title={`${formattedDate}: ${
+                  day.workouts
+                } ${
+                  day.workouts === 1
+                    ? "workout"
+                    : "workouts"
+                }`}
+              >
+                <span>
+                  {
+                    new Date(
+                      `${day.date}T12:00:00`
+                    ).getDate()
+                  }
+                </span>
+
+                {day.workouts > 0 && (
+                  <small>
+                    {day.workouts}
+                  </small>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="heatmap-footer">
+          <span>Less</span>
+
+          <div className="heatmap-legend">
+            <i className="empty" />
+            <i className="low" />
+            <i className="medium" />
+            <i className="high" />
+          </div>
+
+          <span>More</span>
+        </div>
+      </section>
 
       <section className="personal-records-section">
         <div className="section-heading">
@@ -2257,4 +2448,3 @@ function Progress() {
 }
 
 export default Progress;
-         
