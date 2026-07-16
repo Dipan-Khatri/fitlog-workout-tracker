@@ -1,5 +1,21 @@
 import { useEffect, useState } from "react";
 
+function getTodayDate() {
+  const today = new Date();
+
+  const year = today.getFullYear();
+
+  const month = String(
+    today.getMonth() + 1
+  ).padStart(2, "0");
+
+  const day = String(
+    today.getDate()
+  ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
 const emptyWorkout = {
   workoutName: "",
   date: "",
@@ -69,7 +85,7 @@ const workoutTemplates = [
       reps: 10,
       weight: 65,
       notes:
-        "Train chest, shoulders and triceps.",
+        "Train chest, shoulders, and triceps.",
     },
   },
   {
@@ -99,7 +115,7 @@ const workoutTemplates = [
       reps: 12,
       weight: 45,
       notes:
-        "Complete a balanced full body workout.",
+        "Complete a balanced full-body workout.",
     },
   },
 ];
@@ -113,20 +129,38 @@ function WorkoutForm({
   onCancel,
   showTemplates = false,
 }) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(() => ({
     ...emptyWorkout,
     ...initialWorkout,
-  });
+
+    // New workouts automatically use today's date.
+    // Existing workouts keep their saved date.
+    date:
+      initialWorkout?.date ||
+      getTodayDate(),
+  }));
 
   const [errors, setErrors] = useState({});
-  const [selectedTemplate, setSelectedTemplate] =
-    useState("");
+
+  const [
+    selectedTemplate,
+    setSelectedTemplate,
+  ] = useState("");
 
   useEffect(() => {
     setFormData({
       ...emptyWorkout,
       ...initialWorkout,
+
+      // Keep the original date while editing.
+      // Use today's date only when no date exists.
+      date:
+        initialWorkout?.date ||
+        getTodayDate(),
     });
+
+    setErrors({});
+    setSelectedTemplate("");
   }, [initialWorkout]);
 
   function handleChange(event) {
@@ -144,16 +178,16 @@ function WorkoutForm({
   }
 
   function applyTemplate(template) {
-    const today = new Date()
-      .toISOString()
-      .split("T")[0];
-
     setSelectedTemplate(template.id);
 
     setFormData((currentData) => ({
       ...currentData,
       ...template.data,
-      date: currentData.date || today,
+
+      // Do not overwrite a date the user already selected.
+      date:
+        currentData.date ||
+        getTodayDate(),
     }));
 
     setErrors({});
@@ -168,7 +202,8 @@ function WorkoutForm({
     }
 
     if (!formData.date) {
-      newErrors.date = "Date is required.";
+      newErrors.date =
+        "Date is required.";
     }
 
     if (!formData.exerciseName.trim()) {
@@ -176,29 +211,39 @@ function WorkoutForm({
         "Exercise name is required.";
     }
 
-    if (Number(formData.duration) <= 0) {
+    if (
+      Number(formData.duration) <= 0
+    ) {
       newErrors.duration =
         "Duration must be greater than 0.";
     }
 
-    if (Number(formData.sets) <= 0) {
+    if (
+      Number(formData.sets) <= 0
+    ) {
       newErrors.sets =
         "Sets must be greater than 0.";
     }
 
-    if (Number(formData.reps) <= 0) {
+    if (
+      Number(formData.reps) <= 0
+    ) {
       newErrors.reps =
         "Reps must be greater than 0.";
     }
 
-    if (Number(formData.weight) < 0) {
+    if (
+      Number(formData.weight) < 0
+    ) {
       newErrors.weight =
         "Weight cannot be negative.";
     }
 
     setErrors(newErrors);
 
-    return Object.keys(newErrors).length === 0;
+    return (
+      Object.keys(newErrors).length === 0
+    );
   }
 
   function handleSubmit(event) {
@@ -210,68 +255,103 @@ function WorkoutForm({
 
     onSubmit({
       ...formData,
-      duration: Number(formData.duration),
-      sets: Number(formData.sets),
-      reps: Number(formData.reps),
-      weight: Number(formData.weight) || 0,
+
+      workoutName:
+        formData.workoutName.trim(),
+
+      exerciseName:
+        formData.exerciseName.trim(),
+
+      notes:
+        formData.notes.trim(),
+
+      duration:
+        Number(formData.duration),
+
+      sets:
+        Number(formData.sets),
+
+      reps:
+        Number(formData.reps),
+
+      weight:
+        Number(formData.weight) || 0,
     });
   }
+
+  const workoutVolume =
+    Number(formData.sets || 0) *
+    Number(formData.reps || 0) *
+    Number(formData.weight || 0);
 
   return (
     <>
       {showTemplates && (
         <section className="workout-template-section">
           <div className="section-heading">
-            <h2>Quick Workout Templates</h2>
+            <h2>
+              Quick Workout Templates
+            </h2>
 
             <p>
-              Select a template to automatically
-              fill the form.
+              Select a template to
+              automatically fill the form.
             </p>
           </div>
 
           <div className="workout-template-grid">
-            {workoutTemplates.map((template) => (
-              <button
-                key={template.id}
-                type="button"
-                className={
-                  selectedTemplate === template.id
-                    ? "workout-template-card selected"
-                    : "workout-template-card"
-                }
-                onClick={() =>
-                  applyTemplate(template)
-                }
-              >
-                <span>{template.icon}</span>
+            {workoutTemplates.map(
+              (template) => (
+                <button
+                  key={template.id}
+                  type="button"
+                  className={
+                    selectedTemplate ===
+                    template.id
+                      ? "workout-template-card selected"
+                      : "workout-template-card"
+                  }
+                  onClick={() =>
+                    applyTemplate(template)
+                  }
+                >
+                  <span>
+                    {template.icon}
+                  </span>
 
-                <strong>{template.name}</strong>
+                  <strong>
+                    {template.name}
+                  </strong>
 
-                <small>
-                  {template.data.exerciseName}
-                </small>
-              </button>
-            ))}
+                  <small>
+                    {
+                      template.data
+                        .exerciseName
+                    }
+                  </small>
+                </button>
+              )
+            )}
           </div>
         </section>
       )}
 
       <div className="workout-layout">
-
         <form
           className="workout-form-card"
           onSubmit={handleSubmit}
           noValidate
         >
-
-          {Object.keys(errors).length > 0 && (
+          {Object.keys(errors).length >
+            0 && (
             <div className="form-error-summary">
-              Please correct the highlighted
-              fields before saving.
+              Please correct the
+              highlighted fields before
+              saving.
             </div>
           )}
-                    <div className="form-grid">
+
+          <div className="form-grid">
             <div className="form-group">
               <label htmlFor="workoutName">
                 Workout Name
@@ -280,7 +360,9 @@ function WorkoutForm({
               <input
                 id="workoutName"
                 name="workoutName"
-                value={formData.workoutName}
+                value={
+                  formData.workoutName
+                }
                 onChange={handleChange}
                 placeholder="e.g., Chest Day"
                 className={
@@ -330,7 +412,9 @@ function WorkoutForm({
               <input
                 id="exerciseName"
                 name="exerciseName"
-                value={formData.exerciseName}
+                value={
+                  formData.exerciseName
+                }
                 onChange={handleChange}
                 placeholder="e.g., Bench Press"
                 className={
@@ -357,7 +441,9 @@ function WorkoutForm({
                 name="duration"
                 type="number"
                 min="1"
-                value={formData.duration}
+                value={
+                  formData.duration
+                }
                 onChange={handleChange}
                 placeholder="e.g., 60"
                 className={
@@ -455,7 +541,8 @@ function WorkoutForm({
                 </small>
               )}
             </div>
-                        <div className="form-group form-group-full">
+
+            <div className="form-group form-group-full">
               <label htmlFor="notes">
                 Notes
               </label>
@@ -471,7 +558,8 @@ function WorkoutForm({
               />
 
               <small className="field-help-text">
-                {formData.notes.length} / 500 characters
+                {formData.notes.length} /
+                500 characters
               </small>
             </div>
           </div>
@@ -500,32 +588,32 @@ function WorkoutForm({
           >
             Cancel
           </button>
-
         </form>
 
         <aside className="summary-card">
-
           <div className="summary-header">
-
             <div className="summary-icon">
               ✓
             </div>
 
             <div>
-              <h3>Workout Summary</h3>
+              <h3>
+                Workout Summary
+              </h3>
 
               <p>
-                Review your workout details.
+                Review your workout
+                details.
               </p>
             </div>
-
           </div>
 
           <div className="summary-row">
             <span>Workout</span>
 
             <strong>
-              {formData.workoutName || "—"}
+              {formData.workoutName ||
+                "—"}
             </strong>
           </div>
 
@@ -541,61 +629,46 @@ function WorkoutForm({
             <span>Exercise</span>
 
             <strong>
-              {formData.exerciseName || "—"}
+              {formData.exerciseName ||
+                "—"}
             </strong>
           </div>
 
           <div className="summary-details">
-
             <p>
-              Duration:
-              {" "}
-              {formData.duration || 0}
-              {" "}
+              Duration:{" "}
+              {formData.duration || 0}{" "}
               minutes
             </p>
 
             <p>
-              Sets:
-              {" "}
+              Sets:{" "}
               {formData.sets || 0}
             </p>
 
             <p>
-              Reps:
-              {" "}
+              Reps:{" "}
               {formData.reps || 0}
             </p>
 
             <p>
-              Weight:
-              {" "}
-              {formData.weight || 0}
-              {" "}
+              Weight:{" "}
+              {formData.weight || 0}{" "}
               lbs
             </p>
 
             <p>
-              Volume:
-              {" "}
-              {(
-                Number(formData.sets || 0) *
-                Number(formData.reps || 0) *
-                Number(formData.weight || 0)
-              ).toLocaleString()}
-              {" "}
+              Volume:{" "}
+              {workoutVolume.toLocaleString()}{" "}
               lbs
             </p>
-
           </div>
-                    <div className="ready-message">
+
+          <div className="ready-message">
             ● Status: Ready to Save
           </div>
-
         </aside>
-
       </div>
-
     </>
   );
 }

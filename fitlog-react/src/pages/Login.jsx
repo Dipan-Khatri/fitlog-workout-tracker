@@ -5,6 +5,7 @@ function Login() {
   const navigate = useNavigate();
 
   const [mode, setMode] = useState("signin");
+
   const [message, setMessage] = useState({
     type: "",
     text: "",
@@ -16,6 +17,31 @@ function Login() {
     password: "",
     confirmPassword: "",
   });
+
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  const [
+    showConfirmPassword,
+    setShowConfirmPassword,
+  ] = useState(false);
+
+  function getSavedUsers() {
+    try {
+      return (
+        JSON.parse(
+          localStorage.getItem("fitlogUsers")
+        ) || []
+      );
+    } catch (error) {
+      console.error(
+        "Unable to load FitLog users:",
+        error
+      );
+
+      return [];
+    }
+  }
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -31,6 +57,18 @@ function Login() {
     });
   }
 
+  function clearForm() {
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+  }
+
   function changeMode(nextMode) {
     setMode(nextMode);
 
@@ -39,16 +77,32 @@ function Login() {
       text: "",
     });
 
-    setFormData({
+    clearForm();
+  }
+
+  function openForgotPassword() {
+    setMode("forgot");
+
+    setMessage({
+      type: "",
+      text: "",
+    });
+
+    setFormData((currentData) => ({
+      ...currentData,
       name: "",
-      email: "",
       password: "",
       confirmPassword: "",
-    });
+    }));
+
+    setShowPassword(false);
+    setShowConfirmPassword(false);
   }
 
   function validateEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+      email
+    );
   }
 
   function getPasswordChecks(password) {
@@ -62,7 +116,8 @@ function Login() {
   }
 
   function passwordIsValid(password) {
-    const checks = getPasswordChecks(password);
+    const checks =
+      getPasswordChecks(password);
 
     return Object.values(checks).every(Boolean);
   }
@@ -95,7 +150,10 @@ function Login() {
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    if (
+      formData.password !==
+      formData.confirmPassword
+    ) {
       setMessage({
         type: "error",
         text: "The passwords do not match.",
@@ -104,14 +162,17 @@ function Login() {
       return;
     }
 
-    const existingUsers =
-      JSON.parse(localStorage.getItem("fitlogUsers")) || [];
+    const existingUsers = getSavedUsers();
 
-    const emailAlreadyExists = existingUsers.some(
-      (user) =>
-        user.email.toLowerCase() ===
-        formData.email.trim().toLowerCase()
-    );
+    const normalizedEmail =
+      formData.email.trim().toLowerCase();
+
+    const emailAlreadyExists =
+      existingUsers.some(
+        (user) =>
+          String(user.email).toLowerCase() ===
+          normalizedEmail
+      );
 
     if (emailAlreadyExists) {
       setMessage({
@@ -125,14 +186,17 @@ function Login() {
     const newUser = {
       id: crypto.randomUUID(),
       name: formData.name.trim(),
-      email: formData.email.trim().toLowerCase(),
+      email: normalizedEmail,
       password: formData.password,
       createdAt: new Date().toISOString(),
     };
 
     localStorage.setItem(
       "fitlogUsers",
-      JSON.stringify([...existingUsers, newUser])
+      JSON.stringify([
+        ...existingUsers,
+        newUser,
+      ])
     );
 
     setMode("signin");
@@ -143,6 +207,9 @@ function Login() {
       password: "",
       confirmPassword: "",
     });
+
+    setShowPassword(false);
+    setShowConfirmPassword(false);
 
     setMessage({
       type: "success",
@@ -169,13 +236,15 @@ function Login() {
       return;
     }
 
-    const savedUsers =
-      JSON.parse(localStorage.getItem("fitlogUsers")) || [];
+    const savedUsers = getSavedUsers();
+
+    const normalizedEmail =
+      formData.email.trim().toLowerCase();
 
     const matchedUser = savedUsers.find(
       (user) =>
-        user.email.toLowerCase() ===
-          formData.email.trim().toLowerCase() &&
+        String(user.email).toLowerCase() ===
+          normalizedEmail &&
         user.password === formData.password
     );
 
@@ -188,12 +257,114 @@ function Login() {
       return;
     }
 
-    localStorage.setItem("fitlogLoggedIn", "true");
-    localStorage.setItem("fitlogCurrentUserId", matchedUser.id);
-    localStorage.setItem("fitlogUserEmail", matchedUser.email);
-    localStorage.setItem("fitlogUserName", matchedUser.name);
+    localStorage.setItem(
+      "fitlogLoggedIn",
+      "true"
+    );
+
+    localStorage.setItem(
+      "fitlogCurrentUserId",
+      matchedUser.id
+    );
+
+    localStorage.setItem(
+      "fitlogUserEmail",
+      matchedUser.email
+    );
+
+    localStorage.setItem(
+      "fitlogUserName",
+      matchedUser.name
+    );
 
     navigate("/dashboard");
+  }
+
+  function handlePasswordReset() {
+    if (!validateEmail(formData.email)) {
+      setMessage({
+        type: "error",
+        text: "Please enter your registered email address.",
+      });
+
+      return;
+    }
+
+    if (!passwordIsValid(formData.password)) {
+      setMessage({
+        type: "error",
+        text: "Your new password does not meet all requirements.",
+      });
+
+      return;
+    }
+
+    if (
+      formData.password !==
+      formData.confirmPassword
+    ) {
+      setMessage({
+        type: "error",
+        text: "The new passwords do not match.",
+      });
+
+      return;
+    }
+
+    const savedUsers = getSavedUsers();
+
+    const normalizedEmail =
+      formData.email.trim().toLowerCase();
+
+    const userExists = savedUsers.some(
+      (user) =>
+        String(user.email).toLowerCase() ===
+        normalizedEmail
+    );
+
+    if (!userExists) {
+      setMessage({
+        type: "error",
+        text: "No FitLog account was found with that email.",
+      });
+
+      return;
+    }
+
+    const updatedUsers = savedUsers.map(
+      (user) =>
+        String(user.email).toLowerCase() ===
+        normalizedEmail
+          ? {
+              ...user,
+              password: formData.password,
+              passwordUpdatedAt:
+                new Date().toISOString(),
+            }
+          : user
+    );
+
+    localStorage.setItem(
+      "fitlogUsers",
+      JSON.stringify(updatedUsers)
+    );
+
+    setMode("signin");
+
+    setFormData({
+      name: "",
+      email: normalizedEmail,
+      password: "",
+      confirmPassword: "",
+    });
+
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+
+    setMessage({
+      type: "success",
+      text: "Password reset successfully. Sign in with your new password.",
+    });
   }
 
   function handleSubmit(event) {
@@ -201,12 +372,40 @@ function Login() {
 
     if (mode === "signup") {
       handleCreateAccount();
-    } else {
-      handleSignIn();
+      return;
     }
+
+    if (mode === "forgot") {
+      handlePasswordReset();
+      return;
+    }
+
+    handleSignIn();
   }
 
-  const passwordChecks = getPasswordChecks(formData.password);
+  const passwordChecks =
+    getPasswordChecks(formData.password);
+
+  const heading =
+    mode === "signin"
+      ? "Welcome to FitLog"
+      : mode === "signup"
+      ? "Create Your Account"
+      : "Reset Your Password";
+
+  const subtitle =
+    mode === "signin"
+      ? "Sign in to continue tracking your workouts."
+      : mode === "signup"
+      ? "Create an account to begin your fitness journey."
+      : "Enter your registered email and create a new password.";
+
+  const submitText =
+    mode === "signin"
+      ? "Sign In"
+      : mode === "signup"
+      ? "Create Account"
+      : "Reset Password";
 
   return (
     <main className="fitlog-login-page">
@@ -220,42 +419,54 @@ function Login() {
           className="fitlog-login-logo"
         />
 
-        <div className="auth-tabs">
+        {mode !== "forgot" && (
+          <div className="auth-tabs">
+            <button
+              type="button"
+              className={
+                mode === "signin"
+                  ? "auth-tab active"
+                  : "auth-tab"
+              }
+              onClick={() =>
+                changeMode("signin")
+              }
+            >
+              Sign In
+            </button>
+
+            <button
+              type="button"
+              className={
+                mode === "signup"
+                  ? "auth-tab active"
+                  : "auth-tab"
+              }
+              onClick={() =>
+                changeMode("signup")
+              }
+            >
+              Create Account
+            </button>
+          </div>
+        )}
+
+        {mode === "forgot" && (
           <button
             type="button"
-            className={
-              mode === "signin"
-                ? "auth-tab active"
-                : "auth-tab"
+            className="forgot-back-button"
+            onClick={() =>
+              changeMode("signin")
             }
-            onClick={() => changeMode("signin")}
           >
-            Sign In
+            ← Back to Sign In
           </button>
+        )}
 
-          <button
-            type="button"
-            className={
-              mode === "signup"
-                ? "auth-tab active"
-                : "auth-tab"
-            }
-            onClick={() => changeMode("signup")}
-          >
-            Create Account
-          </button>
-        </div>
-
-        <h1>
-          {mode === "signin"
-            ? "Welcome to FitLog"
-            : "Create Your Account"}
-        </h1>
+        <h1>{heading}</h1>
 
         <p className="login-subtitle">
-          {mode === "signin"
-            ? "Sign in to continue tracking your workouts."
-            : "Create an account to begin your fitness journey."}
+          {subtitle}
         </p>
 
         {message.text && (
@@ -270,10 +481,15 @@ function Login() {
           </div>
         )}
 
-        <form className="login-form" onSubmit={handleSubmit}>
+        <form
+          className="login-form"
+          onSubmit={handleSubmit}
+        >
           {mode === "signup" && (
             <>
-              <label htmlFor="name">Full Name</label>
+              <label htmlFor="name">
+                Full Name
+              </label>
 
               <input
                 id="name"
@@ -287,7 +503,9 @@ function Login() {
             </>
           )}
 
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">
+            Email
+          </label>
 
           <input
             id="email"
@@ -299,114 +517,235 @@ function Login() {
             autoComplete="email"
           />
 
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password">
+            {mode === "forgot"
+              ? "New Password"
+              : "Password"}
+          </label>
 
-          <input
-            id="password"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Enter your password"
-            autoComplete={
-              mode === "signin"
-                ? "current-password"
-                : "new-password"
-            }
-          />
+          <div className="password-input-wrapper">
+            <input
+              id="password"
+              name="password"
+              type={
+                showPassword
+                  ? "text"
+                  : "password"
+              }
+              value={formData.password}
+              onChange={handleChange}
+              placeholder={
+                mode === "forgot"
+                  ? "Enter a new password"
+                  : "Enter your password"
+              }
+              autoComplete={
+                mode === "signin"
+                  ? "current-password"
+                  : "new-password"
+              }
+            />
 
-          {mode === "signup" && (
+            <button
+              type="button"
+              className="password-visibility-button"
+              onClick={() =>
+                setShowPassword(
+                  (currentValue) =>
+                    !currentValue
+                )
+              }
+              aria-label={
+                showPassword
+                  ? "Hide password"
+                  : "Show password"
+              }
+              title={
+                showPassword
+                  ? "Hide password"
+                  : "Show password"
+              }
+            >
+              {showPassword ? "🙈" : "👁"}
+            </button>
+          </div>
+
+          {(mode === "signup" ||
+            mode === "forgot") && (
             <>
               <div className="password-requirements">
                 <p>Password requirements</p>
 
                 <span
                   className={
-                    passwordChecks.length ? "valid" : ""
+                    passwordChecks.length
+                      ? "valid"
+                      : ""
                   }
                 >
-                  {passwordChecks.length ? "✓" : "○"} At least 8
-                  characters
+                  {passwordChecks.length
+                    ? "✓"
+                    : "○"}{" "}
+                  At least 8 characters
                 </span>
 
                 <span
                   className={
-                    passwordChecks.uppercase ? "valid" : ""
+                    passwordChecks.uppercase
+                      ? "valid"
+                      : ""
                   }
                 >
-                  {passwordChecks.uppercase ? "✓" : "○"} One
-                  uppercase letter
+                  {passwordChecks.uppercase
+                    ? "✓"
+                    : "○"}{" "}
+                  One uppercase letter
                 </span>
 
                 <span
                   className={
-                    passwordChecks.lowercase ? "valid" : ""
+                    passwordChecks.lowercase
+                      ? "valid"
+                      : ""
                   }
                 >
-                  {passwordChecks.lowercase ? "✓" : "○"} One
-                  lowercase letter
+                  {passwordChecks.lowercase
+                    ? "✓"
+                    : "○"}{" "}
+                  One lowercase letter
                 </span>
 
                 <span
                   className={
-                    passwordChecks.number ? "valid" : ""
+                    passwordChecks.number
+                      ? "valid"
+                      : ""
                   }
                 >
-                  {passwordChecks.number ? "✓" : "○"} One number
+                  {passwordChecks.number
+                    ? "✓"
+                    : "○"}{" "}
+                  One number
                 </span>
 
                 <span
                   className={
-                    passwordChecks.special ? "valid" : ""
+                    passwordChecks.special
+                      ? "valid"
+                      : ""
                   }
                 >
-                  {passwordChecks.special ? "✓" : "○"} One special
-                  character
+                  {passwordChecks.special
+                    ? "✓"
+                    : "○"}{" "}
+                  One special character
                 </span>
               </div>
 
               <label htmlFor="confirmPassword">
-                Confirm Password
+                {mode === "forgot"
+                  ? "Confirm New Password"
+                  : "Confirm Password"}
               </label>
 
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Re-enter your password"
-                autoComplete="new-password"
-              />
+              <div className="password-input-wrapper">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={
+                    showConfirmPassword
+                      ? "text"
+                      : "password"
+                  }
+                  value={
+                    formData.confirmPassword
+                  }
+                  onChange={handleChange}
+                  placeholder={
+                    mode === "forgot"
+                      ? "Re-enter your new password"
+                      : "Re-enter your password"
+                  }
+                  autoComplete="new-password"
+                />
+
+                <button
+                  type="button"
+                  className="password-visibility-button"
+                  onClick={() =>
+                    setShowConfirmPassword(
+                      (currentValue) =>
+                        !currentValue
+                    )
+                  }
+                  aria-label={
+                    showConfirmPassword
+                      ? "Hide confirmed password"
+                      : "Show confirmed password"
+                  }
+                  title={
+                    showConfirmPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                >
+                  {showConfirmPassword
+                    ? "🙈"
+                    : "👁"}
+                </button>
+              </div>
             </>
           )}
 
-          <button className="sign-in-button" type="submit">
-            {mode === "signin"
-              ? "Sign In"
-              : "Create Account"}
+          {mode === "signin" && (
+            <button
+              type="button"
+              className="forgot-password-button"
+              onClick={openForgotPassword}
+            >
+              Forgot password?
+            </button>
+          )}
+
+          <button
+            className="sign-in-button"
+            type="submit"
+          >
+            {submitText}
           </button>
         </form>
 
-        <p className="switch-auth-text">
-          {mode === "signin"
-            ? "Do not have an account?"
-            : "Already have an account?"}
-
-          <button
-            type="button"
-            className="switch-auth-button"
-            onClick={() =>
-              changeMode(
-                mode === "signin" ? "signup" : "signin"
-              )
-            }
-          >
+        {mode !== "forgot" && (
+          <p className="switch-auth-text">
             {mode === "signin"
-              ? "Create one"
-              : "Sign in"}
-          </button>
-        </p>
+              ? "Do not have an account?"
+              : "Already have an account?"}
+
+            <button
+              type="button"
+              className="switch-auth-button"
+              onClick={() =>
+                changeMode(
+                  mode === "signin"
+                    ? "signup"
+                    : "signin"
+                )
+              }
+            >
+              {mode === "signin"
+                ? "Create one"
+                : "Sign in"}
+            </button>
+          </p>
+        )}
+
+        {mode === "forgot" && (
+          <p className="password-reset-notice">
+            This class-project version resets the
+            password stored in this browser. It does
+            not send an email.
+          </p>
+        )}
       </section>
     </main>
   );

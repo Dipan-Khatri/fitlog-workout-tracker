@@ -5522,3 +5522,82 @@ button.weekly-calendar-day:focus-visible {
     justify-content: center;
   }
 }
+
+/* ==========================================
+   LOGIN PASSWORD VISIBILITY + RESET
+========================================== */
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 52px;
+}
+
+.password-visibility-button {
+  position: absolute;
+  right: 10px;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.password-visibility-button:hover {
+  background: #eef4ff;
+}
+
+.password-visibility-button:focus-visible {
+  outline: 3px solid rgba(36, 108, 241, 0.2);
+}
+
+.forgot-password-button {
+  align-self: flex-end;
+  margin-top: -4px;
+  padding: 0;
+  border: 0;
+  color: #246cf1;
+  background: transparent;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.forgot-password-button:hover {
+  text-decoration: underline;
+}
+
+.forgot-back-button {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0;
+  border: 0;
+  color: #246cf1;
+  background: transparent;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.forgot-back-button:hover {
+  text-decoration: underline;
+}
+
+.password-reset-notice {
+  margin: 18px 0 0;
+  padding: 12px 14px;
+  border: 1px solid #dbe6f4;
+  border-radius: 10px;
+  color: #6f7f94;
+  background: #f7faff;
+  font-size: 12px;
+  line-height: 1.5;
+}

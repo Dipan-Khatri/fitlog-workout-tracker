@@ -322,14 +322,14 @@ function Profile() {
       (
         Number(
           formData.age
-        ) < 13 ||
+        ) < 1 ||
         Number(
           formData.age
         ) > 120
       )
     ) {
       setMessage(
-        "Please enter a valid age between 13 and 120."
+        "Please enter a valid age between 1 and 120."
       );
 
       setMessageType("error");
