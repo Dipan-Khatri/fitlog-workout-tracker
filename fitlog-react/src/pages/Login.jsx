@@ -236,17 +236,33 @@ function Login() {
       return;
     }
 
-    const savedUsers = getSavedUsers();
+   const savedUsers = getSavedUsers();
 
-    const normalizedEmail =
-      formData.email.trim().toLowerCase();
+const normalizedEmail =
+  formData.email.trim().toLowerCase();
 
-    const matchedUser = savedUsers.find(
-      (user) =>
-        String(user.email).toLowerCase() ===
-          normalizedEmail &&
-        user.password === formData.password
-    );
+const demoUser = {
+  id: "fitlog-demo-user",
+  name: "FitLog Demo",
+  email: "demo@fitlog.com",
+  password: "FitLog@123",
+};
+
+let matchedUser;
+
+if (
+  normalizedEmail === demoUser.email &&
+  formData.password === demoUser.password
+) {
+  matchedUser = demoUser;
+} else {
+  matchedUser = savedUsers.find(
+    (user) =>
+      String(user.email).toLowerCase() ===
+        normalizedEmail &&
+      user.password === formData.password
+  );
+}
 
     if (!matchedUser) {
       setMessage({
